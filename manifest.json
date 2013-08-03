@@ -2,7 +2,17 @@
     "name": "IMDB-rater",
     "version": "0.1",
     "manifest_version": 2,
+
     "chrome_url_overrides": {
         "newtab": "index.html"
-    }
+    },
+
+    "permissions": [
+        "http://www.imdb.com/*",
+        "http://p.media-imdb.com/static*"
+    ],
+
+    "permissions": [
+        "contextMenus"
+    ]
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-csp>
+<html ng-csp ng-app="app">
 <head>
     <title>IMDB rater</title>
     <script type="text/javascript" src="js/lib/angular.min.js"></script>
@@ -8,9 +8,29 @@
 <body>
 
 <form ng-controller="FormCtrl">
-    <input type="text">
-    {{hello}}
-    <button>Submit</button>
+    <input ng-value="text()" type="text">
+    <button ng-click="searchIMDB(searchText)">Search</button>
+    <br><br>
+    Title Popular: <br>
+    <ul>
+        <li ng-repeat="popular in populars"><b>Title:</b> {{ popular.title }}
+            <ul>
+                <li><b>Id:</b> {{ popular.id }}</li>
+                <li><b>Rating:</b> {{ popular.rating }}</li>
+            </ul>
+        </li>
+    </ul>
+
+    Title Substring: <br>
+    <ul>
+        <li ng-repeat="sub in subs"><b>Title:</b> {{ sub.title }}
+            <ul>
+                <li><B>Id:</B> {{ sub.id }}</li>
+                <li><B>Rating:</B> {{ sub.rating }}</li>
+            </ul>
+        </li>
+    </ul>
+
 </form>
 
 
