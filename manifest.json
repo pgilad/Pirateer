@@ -9,10 +9,7 @@
 
     "permissions": [
         "http://www.imdb.com/*",
-        "http://p.media-imdb.com/static*"
-    ],
-
-    "permissions": [
+        "http://p.media-imdb.com/static*",
         "contextMenus"
     ]
 }

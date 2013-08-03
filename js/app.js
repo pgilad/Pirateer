@@ -7,30 +7,34 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
         contexts: ['selection']
     };
 
-    chrome.contextMenus.create(prop, function () {
+    chrome.runtime.onInstalled.addListener(function () {
+        chrome.contextMenus.create(prop, function () {
+        });
     });
 
     // The onClicked callback function.
     function onClickHandler(info, tab) {
-        if (info && info.searchText) {
-            $rootScope.$apply(function () {
-
-                searchService.searchText.title = info.searchText;
-            });
+        if (info && info.selectionText) {
+            searchService.updateTitle(info.selectionText);
+            console.log('searching for', info.selectionText);
         }
     }
 
     chrome.contextMenus.onClicked.addListener(onClickHandler);
-
 }]);
 
-app.service('searchService', function () {
-    var searchText = {
-        title: ''
+app.service('searchService', function ($rootScope) {
+    var title = '';
+
+    var updateTitle = function (_withWhat) {
+        $rootScope.$apply(function () {
+            title = _withWhat;
+        })
     };
 
     return {
-        searchText: searchText
+        title: title,
+        updateTitle: updateTitle
     }
 });
 
@@ -59,10 +63,12 @@ app.controller('FormCtrl', ['$scope', '$http', 'searchService', function ($scope
     };
 
     $scope.text = function () {
-        return searchService.searchText.text;
+        return searchService.title;
     };
 
-    searchService.searchText.text = 'hey';
+    $scope.$watch(searchService.title, function (newval, oldval) {
+        console.log(searchService.title);
+    });
 
 
     $scope.searchIMDB = function (textToSearch) {
