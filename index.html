@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html ng-csp>
 <head>
-    <title></title>
+    <title>IMDB rater</title>
+    <script type="text/javascript" src="js/lib/angular.min.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
 </head>
 <body>
 
-hello
+<form ng-controller="FormCtrl">
+    <input type="text">
+    {{hello}}
+    <button>Submit</button>
+</form>
 
 
 </body>
