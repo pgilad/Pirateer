@@ -8,8 +8,9 @@
 <body>
 
 <form ng-controller="FormCtrl">
-    <input ng-value="text()" type="text">
-    <button ng-click="searchIMDB(searchText)">Search</button>
+    <input ng-model="searchString" type="text">
+    <input ng-model="searchYear" type="text">
+    <button ng-click="searchIMDB(searchString)">Search</button>
     <br><br>
     Title Popular: <br>
     <ul>
@@ -17,6 +18,8 @@
             <ul>
                 <li><b>Id:</b> {{ popular.id }}</li>
                 <li><b>Rating:</b> {{ popular.rating }}</li>
+                <li><b>Year:</b> {{ popular.year }}</li>
+                <li><b>Title Type:</b> {{ popular.titleType }}</li>
             </ul>
         </li>
     </ul>
@@ -27,6 +30,8 @@
             <ul>
                 <li><B>Id:</B> {{ sub.id }}</li>
                 <li><B>Rating:</B> {{ sub.rating }}</li>
+                <li><B>Year:</B> {{ sub.year }}</li>
+                <li><b>Title Type:</b> {{ sub.titleType }}</li>
             </ul>
         </li>
     </ul>

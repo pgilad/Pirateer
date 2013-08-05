@@ -7,16 +7,32 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
         contexts: ['selection']
     };
 
-    chrome.runtime.onInstalled.addListener(function () {
-        chrome.contextMenus.create(prop, function () {
-        });
-    });
+//    chrome.contextMenus.create(prop, function () {
+//    });
 
     // The onClicked callback function.
     function onClickHandler(info, tab) {
         if (info && info.selectionText) {
-            searchService.updateTitle(info.selectionText);
-            console.log('searching for', info.selectionText);
+            var _str = info.selectionText;
+            //lose all dots
+            _str = _str.replace(/\./g, ' ');
+            //convert parenthesis to spaces
+            _str = _str.replace(/\(/g, ' ');
+            _str = _str.replace(/\)/g, ' ');
+            //convert double spaces to 1 space
+            _str = _str.replace(/  /g, ' ');
+
+            var m = /\d{4}/g.exec(_str);
+
+            if (m) {
+                searchService.searchString.title = _str.substring(0, m.index - 1);
+                searchService.searchString.year = parseInt(m[0]);
+            }
+            else {
+                searchService.searchString.title = _str;
+            }
+
+            $rootScope.$broadcast('Search_Found');
         }
     }
 
@@ -24,17 +40,12 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
 }]);
 
 app.service('searchService', function ($rootScope) {
-    var title = '';
-
-    var updateTitle = function (_withWhat) {
-        $rootScope.$apply(function () {
-            title = _withWhat;
-        })
+    var searchString = {
+        title: ''
     };
 
     return {
-        title: title,
-        updateTitle: updateTitle
+        searchString: searchString
     }
 });
 
@@ -56,32 +67,44 @@ app.controller('FormCtrl', ['$scope', '$http', 'searchService', function ($scope
                 var _ratingData = data.substring('imdb.rating.run('.length);
                 _ratingData = JSON.parse(_ratingData.substring(0, _ratingData.length - 1));
                 item.rating = _ratingData['resource'] && +_ratingData['resource'].rating;
+                item.year = _ratingData['resource'] && _ratingData['resource'].year;
+                item.titleType = _ratingData['resource'] && _ratingData['resource'].titleType;
+
             })
             .error(function (err) {
                 console.log('Rating Err-', err);
             })
     };
 
-    $scope.text = function () {
-        return searchService.title;
-    };
-
-    $scope.$watch(searchService.title, function (newval, oldval) {
-        console.log(searchService.title);
+    $scope.$on('Search_Found', function () {
+        console.log('got a change');
+        $scope.$apply(function () {
+            $scope.searchString = searchService.searchString.title;
+            $scope.searchYear =  searchService.searchString.year;
+            $scope.searchIMDB($scope.searchString);
+        });
     });
 
 
-    $scope.searchIMDB = function (textToSearch) {
+    $scope.searchIMDB = function () {
         $scope.populars = [];
         $scope.subs = [];
 
+        var textToSearch = $scope.searchString;
+        var yearToSearch = parseInt($scope.searchYear) || null;
+
+
         $http.get($scope.baseQueries.getTitleURI + encodeURI(textToSearch))
             .success(function (data) {
-                var i = 0;
+                var i = 0, _year;
 
                 console.log('Id Data - ', data);
 
                 for (i = 0; data['title_popular'] && i < data['title_popular'].length && i < 3; ++i) {
+                    _year = parseInt(data['title_popular'][i].description.substring(0, 4));
+                    //check for year dif
+                    if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch-_year)>1) continue;
+
                     $scope.populars.push({
                         id: data['title_popular'][i].id,
                         title: data['title_popular'][i].title
@@ -92,6 +115,10 @@ app.controller('FormCtrl', ['$scope', '$http', 'searchService', function ($scope
                 }
 
                 for (i = 0; data['title_substring'] && i < data['title_substring'].length && i < 3; ++i) {
+                    _year = parseInt(data['title_substring'][i].description.substring(0, 4));
+                    //check for year dif
+                    if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch-_year)>1) continue;
+
                     $scope.subs.push({
                         id: data['title_substring'][i].id,
                         title: data['title_substring'][i].title
