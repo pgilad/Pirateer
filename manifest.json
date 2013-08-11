@@ -6,10 +6,16 @@
     "chrome_url_overrides": {
         "newtab": "index.html"
     },
-
     "permissions": [
         "http://www.imdb.com/*",
         "http://p.media-imdb.com/static*",
         "contextMenus"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["http://thepiratebay.sx/*"],
+            "js": ["content.js"],
+            "run_at": "document_end"
+        }
     ]
 }

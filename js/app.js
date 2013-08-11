@@ -7,8 +7,8 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
         contexts: ['selection']
     };
 
-//    chrome.contextMenus.create(prop, function () {
-//    });
+    //chrome.contextMenus.create(prop, function () {
+    //});
 
     // The onClicked callback function.
     function onClickHandler(info, tab) {
@@ -100,7 +100,7 @@ app.controller('FormCtrl', ['$scope', '$http', 'searchService', function ($scope
 
                 console.log('Id Data - ', data);
 
-                for (i = 0; data['title_popular'] && i < data['title_popular'].length && i < 3; ++i) {
+                for (i = 0; data[ 'title_popular'] && i < data['title_popular'].length && i < 3; ++i) {
                     _year = parseInt(data['title_popular'][i].description.substring(0, 4));
                     //check for year dif
                     if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch-_year)>1) continue;
