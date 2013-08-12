@@ -39,15 +39,7 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
     chrome.contextMenus.onClicked.addListener(onClickHandler);
 }]);
 
-app.service('searchService', function ($rootScope) {
-    var searchString = {
-        title: ''
-    };
 
-    return {
-        searchString: searchString
-    }
-});
 
 app.controller('FormCtrl', ['$scope', '$http', 'searchService', function ($scope, $http, searchService) {
 

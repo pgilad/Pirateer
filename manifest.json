@@ -11,6 +11,10 @@
         "http://p.media-imdb.com/static*",
         "contextMenus"
     ],
+    "background": {
+        "page": "background.html",
+        "persistent": false
+    },
     "content_scripts": [
         {
             "matches": ["http://thepiratebay.sx/*"],

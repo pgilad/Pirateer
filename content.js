@@ -1,7 +1,23 @@
-var movieList = [];
+var rawMovieList = [];
+var movieListByName = [];
 
 var getRating = function () {
-    console.log('Array after finish:', movieList);
+    if (movieListByName) {
+        console.log('Sending Array sized:', movieListByName.length);
+        var port = chrome.runtime.connect({name: "getRating"});
+        port.postMessage({type: 'list', list: movieListByName});
+        port.onMessage.addListener(function (msg) {
+            console.log('message:', msg);
+            if (msg.type === 'ratingResponse') {
+                if (msg.index) {
+                    rawMovieList[msg.index].querySelector('td.imdb').innerText = msg.rating;
+                }
+            }
+        });
+    }
+    else {
+        console.log('No Videos in current page');
+    }
 };
 
 var appendChildToParent = function (header, td, node) {
@@ -18,28 +34,40 @@ var applyHeader = function () {
     return true;
 };
 
-var applyTD = function (element, isVideo) {
-    movieList.push({item: element, video: isVideo});
-    var _nodeRating = document.createTextNode((isVideo) ? '' : 'N/A');
+var applyTD = function (element, isVideo, movieObj) {
+    rawMovieList.push(element);
+    if (movieObj) movieListByName.push(movieObj);
+    var _nodeRating = document.createTextNode('');
     var _tdRating = document.createElement("td");
+    _tdRating.className = 'imdb';
+
     appendChildToParent(element, _tdRating, _nodeRating);
 };
 
 var isCategoryVideo = function (category) {
-    return category[0].innerText === 'Video';
+    return category && category[0] && category[0].innerText && category[0].innerText === 'Video';
 };
 
 (function () {
-    var itemFound = false;
+    var itemFound = false,
+        _movieName = null,
+        category,
+        isVideo,
+        movieObj;
+
     //allTrList will include all trs, except header
     var allTrList = document.querySelectorAll("tbody tr");
 
-    //narrow down list
+    //find all category==movie
     for (var i = 0; allTrList, i < allTrList.length; ++i) {
-        var category = allTrList[i].querySelectorAll('.vertTh a');
-        var isVideo = isCategoryVideo(category);
+        category = allTrList[i].querySelectorAll('.vertTh a');
+        isVideo = isCategoryVideo(category);
+        _movieName = null;
+        if (isVideo) _movieName = allTrList[i].querySelector('div.detName').innerText;
+
+        movieObj = (_movieName) ? {name: _movieName, index: i} : null;
         if (!itemFound && isVideo) itemFound = true;
-        applyTD(allTrList[i], isVideo);
+        applyTD(allTrList[i], isVideo, movieObj);
     }
 
     if (itemFound) applyHeader();
