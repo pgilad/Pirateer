@@ -1,5 +1,7 @@
-var getRating = function (arr) {
-    console.log('Array after finish:', arr);
+var movieList = [];
+
+var getRating = function () {
+    console.log('Array after finish:', movieList);
 };
 
 var appendChildToParent = function (header, td, node) {
@@ -16,8 +18,9 @@ var applyHeader = function () {
     return true;
 };
 
-var applyTD = function (element) {
-    var _nodeRating = document.createTextNode("");
+var applyTD = function (element, isVideo) {
+    movieList.push({item: element, video: isVideo});
+    var _nodeRating = document.createTextNode((isVideo) ? '' : 'N/A');
     var _tdRating = document.createElement("td");
     appendChildToParent(element, _tdRating, _nodeRating);
 };
@@ -30,26 +33,17 @@ var isCategoryVideo = function (category) {
     var itemFound = false;
     //allTrList will include all trs, except header
     var allTrList = document.querySelectorAll("tbody tr");
-    var movieList = [];
 
     //narrow down list
     for (var i = 0; allTrList, i < allTrList.length; ++i) {
         var category = allTrList[i].querySelectorAll('.vertTh a');
         var isVideo = isCategoryVideo(category);
         if (!itemFound && isVideo) itemFound = true;
-        movieList.push({item: allTrList[i], video: isVideo});
+        applyTD(allTrList[i], isVideo);
     }
 
+    if (itemFound) applyHeader();
 
-    forEach(function (element, index, arr) {
-        //add header to table if it wasn't added already
-        if (!headerWasAdded) headerWasAdded = applyHeader();
+    getRating();
 
-        applyTD(element);
-        //check if we reached last element
-        if (index === arr.length - 1) {
-            getRating(arr);
-        }
-    });
 })();
-
