@@ -1,0 +1,17 @@
+{
+  "name": "pirateer",
+  "version": "0.1.0",
+  "description": "",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "grunt-cli": "~0.1.9",
+    "grunt": "~0.4.1",
+    "grunt-init": "~0.2.1",
+    "grunt-contrib-htmlmin": "~0.1.3",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-concat": "~0.3.0"
+  },
+  "author": "Gilad Peleg"
+}

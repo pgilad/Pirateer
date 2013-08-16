@@ -16,7 +16,7 @@
     "content_scripts": [
         {
             "matches": ["http://thepiratebay.sx/*"],
-            "js": ["content.js"],
+            "js": ["js/content.js"],
             "run_at": "document_end"
         }
     ]
