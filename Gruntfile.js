@@ -18,9 +18,15 @@ module.exports = function (grunt) {
 
             },
             build: {
-                files: {
-                    'build/*.js': 'public/js/*.js'
-                }
+                files: [
+                    {
+                        expand: true,     // Enable dynamic expansion.
+                        cwd: 'public/js/',      // Src matches are relative to this path.
+                        src: ['*.js'], // Actual pattern(s) to match.
+                        dest: 'build/js',   // Destination path prefix.
+                        ext: '.js'   // Dest filepaths will have this extension.
+                    }
+                ]
             }
         },
 
@@ -30,10 +36,49 @@ module.exports = function (grunt) {
                     removeComments: true,
                     collapseWhitespace: true
                 },
-                files: {                                   // Dictionary of files
-                    'build/index.html': 'public/index.html',     // 'destination': 'source'
-                    'build/background.html': 'public/background.html'
-                }
+                files: [
+                    {
+                        expand: true,     // Enable dynamic expansion.
+                        cwd: 'public/',      // Src matches are relative to this path.
+                        src: ['*.html'], // Actual pattern(s) to match.
+                        dest: 'build/'   // Destination path prefix
+                    }
+                ]
+            }
+        },
+        copy: {
+            build: {
+                files: [
+                    {
+                        expand: true,
+                        src: ['public/package.json'],
+                        dest: 'build/'
+                    }, // includes files in path
+                    {
+                        expand: true,
+                        src: ['public/**/*'],
+                        dest: 'build/',
+                        filter: 'isDirectory'
+                    }, // includes files in path and its subdirs
+                    {
+                        expand: true,
+                        cwd: 'public/css',
+                        src: ['*.css'],
+                        dest: 'build/css'
+                    }, // makes all src relative to cwd
+                    {
+                        expand: true,
+                        cwd: 'public/img',
+                        src: ['**/*'],
+                        dest: 'build/img'
+                    }, // makes all src relative to cwd
+                    {
+                        expand: true,
+                        cwd: 'public/js/lib',
+                        src: ['**/*'],
+                        dest: 'build/js/lib'
+                    } // makes all src relative to cwd
+                ]
             }
         },
 
@@ -46,9 +91,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('htmlmin', ['htmlmin']);
-    grunt.registerTask('uglify', ['uglify']);
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('build', ['uglify', 'htmlmin', 'copy']);
 
 };
