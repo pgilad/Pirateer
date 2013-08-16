@@ -1,0 +1,23 @@
+{
+    "name": "Pirateer",
+    "version": "0.1",
+    "manifest_version": 2,
+    "author": "Gilad Peleg",
+
+    "permissions": [
+        "http://www.imdb.com/*",
+        "http://p.media-imdb.com/static*",
+        "contextMenus"
+    ],
+    "background": {
+        "page": "background.html",
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+            "matches": ["http://thepiratebay.sx/*"],
+            "js": ["js/content.js"],
+            "run_at": "document_end"
+        }
+    ]
+}

@@ -51,12 +51,14 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        src: ['public/package.json'],
+                        cwd: 'public/',
+                        src: ['manifest.json'],
                         dest: 'build/'
                     }, // includes files in path
                     {
                         expand: true,
-                        src: ['public/**/*'],
+                        cwd: 'public/',
+                        src: ['**/*'],
                         dest: 'build/',
                         filter: 'isDirectory'
                     }, // includes files in path and its subdirs
