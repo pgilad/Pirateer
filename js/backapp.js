@@ -1,11 +1,22 @@
 var app = angular.module('app', []);
 
-app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
+app.run(['searchService', '$q', function (searchService, $q) {
+
+    var shouldQuery = false;
 
     // The onClicked callback function.
-    function onRequestHandler(list, port) {
-        if (list && list.length > 0) {
+    var shiftAndNext = function (list, port) {
+        list.shift();
+        onRequestHandler(list, port, false);
+    };
+
+    function onRequestHandler(list, port, firstRun) {
+
+        if (shouldQuery && list && list.length > 0) {
+
             var _str = list[0].name;
+            var title, year;
+
             //lose all dots
             _str = _str.replace(/\./g, ' ');
             //convert parenthesis to spaces
@@ -17,23 +28,40 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
             var m = /\d{4}/g.exec(_str);
 
             if (m) {
-                var _title = searchService.searchString.title = _str.substring(0, m.index - 1);
-                var _year = parseInt(m[0]);
+                title = _str.substring(0, m.index - 1);
+                year = parseInt(m[0]);
             }
             else {
-                var _title = _str;
+                title = _str;
             }
 
-            $rootScope.$broadcast('Search_Found');
-            port.postMessage({type: 'ratingResponse', index: list[0].index, rating: 7.6});
+            searchService.searchIMDB(firstRun, title, year)
+                .then(function (item) {
+                    if (shouldQuery) {
+                        port.postMessage({type: 'ratingResponse', index: list[0].index, rating: item.rating});
+                        shiftAndNext(list, port);
+                    }
+
+                }, function (err) {
+                    if (shouldQuery) {
+                        console.log('error with this', list[0]);
+                        shiftAndNext(list, port);
+                    }
+                });
         }
     }
 
     chrome.runtime.onConnect.addListener(function (port) {
+        port.onDisconnect.addListener(function () {
+            shouldQuery = false;
+            port.onMessage.removeListener();
+        });
         if (port.name === 'getRating') {
             port.onMessage.addListener(function (msg) {
-                console.log('received list:', msg);
-                if (msg.type === 'list') onRequestHandler(msg.list, port);
+                if (msg.type === 'list') {
+                    shouldQuery = true;
+                    onRequestHandler(msg.list, port, true);
+                }
             });
         }
     });

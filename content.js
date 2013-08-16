@@ -2,21 +2,19 @@ var rawMovieList = [];
 var movieListByName = [];
 
 var getRating = function () {
-    if (movieListByName) {
-        console.log('Sending Array sized:', movieListByName.length);
+    if (movieListByName.length) {
         var port = chrome.runtime.connect({name: "getRating"});
         port.postMessage({type: 'list', list: movieListByName});
         port.onMessage.addListener(function (msg) {
-            console.log('message:', msg);
             if (msg.type === 'ratingResponse') {
-                if (msg.index) {
+                if (typeof msg.index !== 'undefined') {
                     rawMovieList[msg.index].querySelector('td.imdb').innerText = msg.rating;
                 }
             }
         });
     }
     else {
-        console.log('No Videos in current page');
+        console.log('[Pirateer] - No Videos in current page');
     }
 };
 
@@ -62,9 +60,9 @@ var isCategoryVideo = function (category) {
     for (var i = 0; allTrList, i < allTrList.length; ++i) {
         category = allTrList[i].querySelectorAll('.vertTh a');
         isVideo = isCategoryVideo(category);
-        _movieName = null;
-        if (isVideo) _movieName = allTrList[i].querySelector('div.detName').innerText;
-
+        //if it's a movie then get it's name
+        _movieName = (isVideo) ? allTrList[i].querySelector('div.detName').innerText : null;
+        //build movieObj if it's a movie
         movieObj = (_movieName) ? {name: _movieName, index: i} : null;
         if (!itemFound && isVideo) itemFound = true;
         applyTD(allTrList[i], isVideo, movieObj);
