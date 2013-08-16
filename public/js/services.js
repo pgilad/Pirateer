@@ -49,13 +49,13 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
                     getRating(populars[0], deferred);
                 }
                 else {
-                    console.log('no populars[0] for', textToSearch);
+//                    console.log('no populars[0] for', textToSearch);
                     deferred.reject();
                 }
                 /*End of Logic*/
             })
             .error(function (err) {
-                console.log('ID data-', err);
+//                console.log('ID data-', err);
                 deferred.reject();
             });
 
@@ -84,12 +84,12 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
                     item.ratingCount = _ratingData['resource'].ratingCount;
                     item.topRank = _ratingData['resource'].topRank;
                 }
-                console.log('got item rating:', item);
+//                console.log('got item rating:', item);
                 deferred.resolve(item);
 
             })
             .error(function (err) {
-                console.log('Rating Err-', err);
+//                console.log('Rating Err-', err);
                 deferred.reject();
             })
     };
