@@ -47,10 +47,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
 
-    grunt.registerTask('test', ['jshint', 'qunit']);
     grunt.registerTask('htmlmin', ['htmlmin']);
     grunt.registerTask('uglify', ['uglify']);
-
-    grunt.registerTask('default', []);
+    grunt.registerTask('default', ['uglify']);
 
 };
