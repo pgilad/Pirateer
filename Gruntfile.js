@@ -2,7 +2,13 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        banner: 'v<%= pkg.version %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
+        banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
+
+        bumpup: {
+                files: [
+                    'public/manifest.json'
+                ]
+        },
 
         concat: {
             options: {
@@ -15,7 +21,6 @@ module.exports = function (grunt) {
         },
         uglify: {
             options: {
-
             },
             build: {
                 files: [
@@ -94,7 +99,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-bumpup');
 
     grunt.registerTask('build', ['uglify', 'htmlmin', 'copy']);
+    grunt.registerTask('inc', ['bumpup:build']);
 
 };

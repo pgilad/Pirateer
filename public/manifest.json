@@ -15,8 +15,12 @@
     },
     "content_scripts": [
         {
-            "matches": ["http://thepiratebay.sx/*"],
-            "js": ["js/content.js"],
+            "matches": [
+                "http://thepiratebay.sx/*"
+            ],
+            "js": [
+                "js/content.js"
+            ],
             "run_at": "document_end"
         }
     ]
