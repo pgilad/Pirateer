@@ -5,9 +5,9 @@ module.exports = function (grunt) {
         banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
 
         bumpup: {
-                files: [
-                    'public/manifest.json'
-                ]
+            files: [
+                'public/manifest.json'
+            ]
         },
 
         concat: {
@@ -101,7 +101,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-bumpup');
 
-    grunt.registerTask('build', ['uglify', 'htmlmin', 'copy']);
-    grunt.registerTask('inc', ['bumpup:build']);
-
+    grunt.registerTask('build', ['bumpup:patch', 'uglify', 'htmlmin', 'copy']);
 };
