@@ -57,34 +57,9 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: 'public/',
-                        src: ['manifest.json'],
+                        src: ['**/*.*', '!**/*.less', '!**/*.html', '!js/*.js'],
                         dest: 'build/'
-                    }, // includes files in path
-                    {
-                        expand: true,
-                        cwd: 'public/',
-                        src: ['**/*'],
-                        dest: 'build/',
-                        filter: 'isDirectory'
-                    }, // includes files in path and its subdirs
-                    {
-                        expand: true,
-                        cwd: 'public/css',
-                        src: ['*.css'],
-                        dest: 'build/css'
-                    }, // makes all src relative to cwd
-                    {
-                        expand: true,
-                        cwd: 'public/img',
-                        src: ['**/*'],
-                        dest: 'build/img'
-                    }, // makes all src relative to cwd
-                    {
-                        expand: true,
-                        cwd: 'public/js/lib',
-                        src: ['**/*'],
-                        dest: 'build/js/lib'
-                    } // makes all src relative to cwd
+                    }
                 ]
             }
         },
@@ -102,4 +77,55 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-bumpup');
 
     grunt.registerTask('build', ['bumpup:patch', 'uglify', 'htmlmin', 'copy']);
+
+    grunt.registerTask('verifyCopyright', function () {
+
+        var fileRead, firstLine, counter = 0, fileExtension, commentWrapper;
+        copyrightInfo = '/* Copyright @Gilad Peleg */';
+
+        //get file extension regex
+        var re = /(?:\.([^.]+))?$/;
+
+        grunt.log.writeln();
+
+        // read all subdirectories from your modules folder
+        grunt.file.expand(
+            {filter: 'isFile', cwd: 'public/'},
+            ["**/*.js", ['**/*.html']])
+            .forEach(function (dir) {
+                fileRead = grunt.file.read('public/' + dir).split('\n');
+                firstLine = fileRead[0];
+
+                if (firstLine.indexOf(copyrightInfo > -1)) {
+
+                    counter++;
+                    grunt.log.write(dir);
+                    grunt.log.writeln(" -->doesn't have copyright. Writing it.");
+
+                    //need to be careful about:
+                    //what kind of comment we can add to each type of file. i.e /* <text> */ to js
+                    fileExtension = re.exec(dir)[1];
+                    switch (fileExtension) {
+                        case 'js':
+                            commentWrapper = '/* ' + copyrightInfo + '*/';
+                            break;
+                        case 'html':
+                            commentWrapper = '<!-- ' + copyrightInfo + '-->';
+                            break;
+                        default:
+                            commentWrapper = null;
+                            grunt.log.writeln('file extension not recognized');
+                            break;
+                    }
+
+                    if (commentWrapper) {
+                        fileRead.unshift(copyrightInfo);
+                        fileRead = fileRead.join('\n');
+                        //grunt.file.write( dir, fileRead)
+                    }
+                }
+            });
+
+        grunt.log.ok('Found', counter, 'files without copyright');
+    })
 };
