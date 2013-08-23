@@ -81,7 +81,7 @@ module.exports = function (grunt) {
     grunt.registerTask('verifyCopyright', function () {
 
         var fileRead, firstLine, counter = 0, fileExtension, commentWrapper;
-        copyrightInfo = '/* Copyright @Gilad Peleg */';
+        copyrightInfo = 'Copyright by Gilad Peleg @2013';
 
         //get file extension regex
         var re = /(?:\.([^.]+))?$/;
@@ -110,7 +110,7 @@ module.exports = function (grunt) {
                             commentWrapper = '/* ' + copyrightInfo + ' */';
                             break;
                         case 'html':
-                            commentWrapper = '<!-- ' + copyrightInfo + ' -->';
+                            commentWrapper = '<!-- ' + copyrightInfo + ' //-->';
                             break;
                         default:
                             commentWrapper = null;
@@ -119,7 +119,7 @@ module.exports = function (grunt) {
                     }
 
                     if (commentWrapper) {
-                        fileRead.unshift(copyrightInfo);
+                        fileRead.unshift(commentWrapper);
                         fileRead = fileRead.join('\n');
                         grunt.file.write( 'public/' + dir, fileRead);
                     }
