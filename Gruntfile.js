@@ -107,10 +107,10 @@ module.exports = function (grunt) {
                     fileExtension = re.exec(dir)[1];
                     switch (fileExtension) {
                         case 'js':
-                            commentWrapper = '/* ' + copyrightInfo + '*/';
+                            commentWrapper = '/* ' + copyrightInfo + ' */';
                             break;
                         case 'html':
-                            commentWrapper = '<!-- ' + copyrightInfo + '-->';
+                            commentWrapper = '<!-- ' + copyrightInfo + ' -->';
                             break;
                         default:
                             commentWrapper = null;
@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                     if (commentWrapper) {
                         fileRead.unshift(copyrightInfo);
                         fileRead = fileRead.join('\n');
-                        //grunt.file.write( dir, fileRead)
+                        grunt.file.write( 'public/' + dir, fileRead);
                     }
                 }
             });
