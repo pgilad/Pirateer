@@ -64,9 +64,21 @@ module.exports = function (grunt) {
             }
         },
 
+        preprocess: {
+            options: {
+                context: {
+
+                }
+            },
+            js: {
+                src: 'public/js/services.js',
+                dest: 'services.js'
+            }
+        },
+
         watch: {
             files: ['<%= jshint.files %>'],
-            tasks: ['jshint', 'qunit']
+            tasks: ['jshint']
         }
     });
 
@@ -75,8 +87,18 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-htmlmin');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-bumpup');
+    grunt.loadNpmTasks('grunt-preprocess');
 
     grunt.registerTask('build', ['bumpup:patch', 'uglify', 'htmlmin', 'copy']);
+
+    grunt.registerTask('baseUrl', function () {
+        var target = grunt.option('rest.baseUrl') || undefined;
+        grunt.log.ok('baseUrl is set to', target);
+        grunt.config('preprocess.options.context.baseUrl', target);
+        grunt.task.run('preprocess');
+    });
+
+    grunt.registerTask('deploy', ['validate', 'upload']);
 
     grunt.registerTask('verifyCopyright', function () {
 
@@ -121,7 +143,7 @@ module.exports = function (grunt) {
                     if (commentWrapper) {
                         fileRead.unshift(commentWrapper);
                         fileRead = fileRead.join('\n');
-                        grunt.file.write( 'public/' + dir, fileRead);
+                        grunt.file.write('public/' + dir, fileRead);
                     }
                 }
             });

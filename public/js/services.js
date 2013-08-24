@@ -7,6 +7,15 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
     var populars = [];
     var subs = [];
 
+    /* Begin insertion of baseUrl by GruntJs */
+    /* @ifdef baseUrl
+     var baseUrl = /* @echo baseUrl */ // @echo ";"
+     // @endif */
+
+    /* @ifndef baseUrl
+     var baseUrl = 'http://www.fallback.url';
+     // @endif */
+    /* End of baseUrl insertion */
 
     var searchIMDB = function (firstRun, textToSearch, yearToSearch) {
         populars = [];
