@@ -1,1 +1,1 @@
-var app=angular.module("app",[]);app.run(["searchService","$rootScope",function(){}]),app.controller("FormCtrl",["$scope","$http","searchService",function(){}]);
+var app=angular.module("app",[]);
