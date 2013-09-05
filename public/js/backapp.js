@@ -44,7 +44,6 @@ app.run(['searchService', '$q', function (searchService, $q) {
 
                 }, function (err) {
                     if (shouldQuery) {
-//                        console.log('error with this', list[0]);
                         shiftAndNext(list, port);
                     }
                 });
