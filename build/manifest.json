@@ -1,6 +1,6 @@
 {
     "name": "Pirateer",
-    "version": "0.1.12",
+    "version": "0.1.13",
     "manifest_version": 2,
     "author": "Gilad Peleg",
     "icons": {
@@ -10,8 +10,7 @@
     },
     "permissions": [
         "http://www.imdb.com/*",
-        "http://p.media-imdb.com/static*",
-        "contextMenus"
+        "http://p.media-imdb.com/static*"
     ],
     "background": {
         "page": "background.html",
@@ -28,6 +27,7 @@
             "run_at": "document_end"
         }
     ],
+    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
     "browser_action": {
         "default_icon": {
             "19": "img/icon_19x19.png",
