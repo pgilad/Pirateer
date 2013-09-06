@@ -7,10 +7,13 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
     var populars = [];
     var subs = [];
 
-    var searchIMDB = function (firstRun, textToSearch, yearToSearch) {
+    var searchIMDB = function (movieObj) {
         populars = [];
         subs = [];
         var deferred = $q.defer();
+
+        var textToSearch = movieObj.title;
+        var yearToSearch = movieObj.year;
 
         yearToSearch = parseInt(yearToSearch) || null;
 
@@ -45,6 +48,7 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
 
                 //TODO begin logic for choosing the best movie id to search
                 if (populars[0]) {
+                    angular.extend(populars[0], {indexArr: movieObj.indexArr});
                     getRating(populars[0], deferred);
                 }
                 else {
@@ -57,8 +61,6 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
 //                console.log('ID data-', err);
                 deferred.reject();
             });
-
-        if (firstRun) $rootScope.$apply();
 
         return deferred.promise;
     };

@@ -8,7 +8,12 @@ var getRating = function () {
         port.onMessage.addListener(function (msg) {
             if (msg.type === 'ratingResponse') {
                 if (typeof msg.index !== 'undefined') {
-                    rawMovieList[msg.index].querySelector('td.imdb').innerText = msg.rating;
+                    var a = document.createElement('a');
+                    var linkText = document.createTextNode(msg.rating);
+                    a.appendChild(linkText);
+                    a.title = msg.title + ' - IMDB' || null;
+                    a.href = "http://www.imdb.com/title/" + msg.id + '/';
+                    rawMovieList[msg.index].querySelector('td.imdb').appendChild(a);
                 }
             }
         });

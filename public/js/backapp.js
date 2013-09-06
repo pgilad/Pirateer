@@ -1,58 +1,79 @@
 var app = angular.module('app', []);
 
 var _gaq = _gaq || [];
-(function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+(function () {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
     ga.src = 'https://ssl.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
 })();
 
-app.run(['searchService', '$q', function (searchService, $q) {
-
+app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
+    var isInit = false;
     var shouldQuery = false;
+    var movieArray = [];
 
-    // The onClicked callback function.
-    var shiftAndNext = function (list, port) {
-        list.shift();
-        onRequestHandler(list, port, false);
-    };
-
-    function onRequestHandler(list, port, firstRun) {
-
-        if (shouldQuery && list && list.length > 0) {
-
-            var _str = list[0].name;
-            var title, year;
+    var prepareList = function (list) {
+        var title, year;
+        for (var i = 0; i < list.length; ++i) {
+            var _movieString = list[i].name;
 
             //lose all dots
-            _str = _str.replace(/\./g, ' ');
-            //convert parenthesis to spaces
-            _str = _str.replace(/\(/g, ' ');
-            _str = _str.replace(/\)/g, ' ');
-            //convert double spaces to 1 space
-            _str = _str.replace(/  /g, ' ');
+            _movieString = _movieString
+                .replace(/\./g, ' ')
+                //lose all dashes
+                .replace(/\-/g, ' ')
+                .replace(/_/g, ' ')
+                //convert parenthesis to spaces
+                .replace(/\(/g, ' ')
+                .replace(/\)/g, ' ')
+                .replace(/\[/g, ' ')
+                .replace(/\]/g, ' ')
+                //convert double spaces to 1 space
+                .replace(/\s\s+/g, ' ')
+                //trim ending spaces
+                .replace(/\s$/, '');
 
-            var m = /\d{4}/g.exec(_str);
+            var possibleYear = /\d{4}/g.exec(_movieString);
 
-            if (m) {
-                title = _str.substring(0, m.index - 1);
-                year = parseInt(m[0]);
+            if (possibleYear) {
+                title = _movieString.substring(0, possibleYear.index - 1);
+                year = parseInt(possibleYear[0]);
             }
             else {
-                title = _str;
+                title = _movieString;
+                year = null;
             }
 
-            searchService.searchIMDB(firstRun, title, year)
+            //if movie not found
+            var _movie = _.find(movieArray, {title: title, year: year});
+            if (!_movie) movieArray.push({title: title, year: year, indexArr: [list[i].index]});
+            else _movie.indexArr.push(list[i].index);
+        }
+    };
+
+    function onRequestHandler(movieList, port) {
+        var movie;
+        if (movieList.length && shouldQuery) {
+            movie = movieList.shift();
+            searchService.searchIMDB(movie)
                 .then(function (item) {
+                    console.log(item);
                     if (shouldQuery) {
-                        port.postMessage({type: 'ratingResponse', index: list[0].index, rating: item.rating});
-                        shiftAndNext(list, port);
+                        for (var j = 0; j < item.indexArr.length; ++j) {
+                            try {
+                                port.postMessage({type: 'ratingResponse', title: item.title, index: item.indexArr[j], rating: item.rating, id: item.id});
+                            }
+                            catch (e) {
+                            }
+                        }
+                        onRequestHandler(movieList, port);
                     }
 
                 }, function (err) {
-                    if (shouldQuery) {
-                        shiftAndNext(list, port);
-                    }
+                    onRequestHandler(movieList, port);
                 });
         }
     }
@@ -62,13 +83,21 @@ app.run(['searchService', '$q', function (searchService, $q) {
             shouldQuery = false;
             port.onMessage.removeListener();
         });
+
         if (port.name === 'getRating') {
             port.onMessage.addListener(function (msg) {
                 if (msg.type === 'list') {
-                    shouldQuery = true;
-                    _gaq.push(['_setAccount', 'UA-43678943-3']);
+                    if (!isInit) {
+                        _gaq.push(['_setAccount', 'UA-43678943-3']);
+                        isInit = true;
+                    }
                     _gaq.push(['_trackPageview']);
-                    onRequestHandler(msg.list, port, true);
+                    shouldQuery = true;
+                    movieArray = [];
+                    prepareList(msg.list);
+                    $rootScope.$apply(function () {
+                        onRequestHandler(angular.copy(movieArray, []), port);
+                    });
                 }
             });
         }
