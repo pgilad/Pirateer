@@ -27,7 +27,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,     // Enable dynamic expansion.
                         cwd: 'public/js/',      // Src matches are relative to this path.
-                        src: ['*.js'], // Actual pattern(s) to match.
+                        src: ['**/*.js', '!lib/*.js'], // Actual pattern(s) to match.
                         dest: 'build/js',   // Destination path prefix.
                         ext: '.js'   // Dest filepaths will have this extension.
                     }
@@ -57,22 +57,10 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: 'public/',
-                        src: ['**/*.*', '!**/*.less', '!**/*.html', '!js/*.js'],
+                        src: ['**/*.*', '!**/*.less', '!**/*.html', '!js/*.js', '!js/src/**/*.js'],
                         dest: 'build/'
                     }
                 ]
-            }
-        },
-
-        preprocess: {
-            options: {
-                context: {
-
-                }
-            },
-            js: {
-                src: 'public/js/services.js',
-                dest: 'services.js'
             }
         },
 

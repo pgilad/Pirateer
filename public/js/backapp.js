@@ -60,7 +60,6 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
             movie = movieList.shift();
             searchService.searchIMDB(movie)
                 .then(function (item) {
-                    console.log(item);
                     if (shouldQuery) {
                         for (var j = 0; j < item.indexArr.length; ++j) {
                             try {
@@ -92,6 +91,8 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
                         isInit = true;
                     }
                     _gaq.push(['_trackPageview']);
+                    _gaq.push(['_trackEvent', 'Search', 'fromIMDB', decodeURI(port.sender.url)]);
+
                     shouldQuery = true;
                     movieArray = [];
                     prepareList(msg.list);
