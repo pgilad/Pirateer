@@ -1,11 +1,15 @@
-app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
+app.service('searchService', ['$http', '$q', function ($http, $q) {
 
-    var baseQueries = {};
-    baseQueries.getTitleURI = 'http://www.imdb.com/xml/find?json=1&nr=1&tt=on&mx=1&q=';
-    baseQueries.getRatingURI = 'http://p.media-imdb.com/static-content/documents/v1/title/AAA/ratings%3Fjsonp=imdb.rating.run:imdb.api.title.ratings/data.json';
+    var baseQueries = {
+        getTitleURI: 'http://www.imdb.com/xml/find?json=1&nr=1&tt=on&mx=1&q=',
+        getRatingURI: 'http://p.media-imdb.com/static-content/documents/v1/title/AAA/ratings%3Fjsonp=imdb.rating.run:imdb.api.title.ratings/data.json'
+    };
 
     var populars = [];
     var subs = [];
+
+    var db = {};
+    var imdbDataOptions = ['title_popular', 'title_substring', 'title_exact'];
 
     var searchIMDB = function (movieObj) {
         populars = [];
@@ -19,46 +23,44 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
 
         $http.get(baseQueries.getTitleURI + encodeURI(textToSearch))
             .success(function (data) {
-                var i = 0, _year;
+                var i = 0, j = 0, _year;
 
-//                console.log('Id Data - ', data);
+                angular.forEach(imdbDataOptions, function (opt) {
+                    db[opt] = [];
+                });
 
-                for (i = 0; data[ 'title_popular'] && i < data['title_popular'].length && i < 3; ++i) {
-                    _year = parseInt(data['title_popular'][i].description.substring(0, 4));
-                    //check for year dif
-                    if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch - _year) > 1) continue;
+                for (j = 0; j < imdbDataOptions.length; ++j) {
+                    var curDataOption = imdbDataOptions[j];
 
-                    populars.push({
-                        id: data['title_popular'][i].id,
-                        title: data['title_popular'][i].title
-                    });
-                }
+                    for (i = 0; data[curDataOption] && i < data[curDataOption].length && i < 3; ++i) {
+                        _year = parseInt(data[curDataOption][i].description.substring(0, 4));
+                        //check for year dif
+                        if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch - _year) > 1) continue;
 
-                for (i = 0; data['title_substring'] && i < data['title_substring'].length && i < 3; ++i) {
-                    _year = parseInt(data['title_substring'][i].description.substring(0, 4));
-                    //check for year dif
-                    if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch - _year) > 1) continue;
-
-                    subs.push({
-                        id: data['title_substring'][i].id,
-                        title: data['title_substring'][i].title
-                    });
-                    //now get the rating
+                        db[curDataOption].push({
+                            id: data[curDataOption][i].id,
+                            title: data[curDataOption][i].title
+                        });
+                    }
                 }
 
                 //TODO begin logic for choosing the best movie id to search
-                if (populars[0]) {
-                    angular.extend(populars[0], {indexArr: movieObj.indexArr});
-                    getRating(populars[0], deferred);
+                var approxMovie = db['title_popular'] && db['title_popular'][0];
+                if (!approxMovie) approxMovie = db['title_substring'] && db['title_substring'][0];
+                if (!approxMovie) approxMovie = db['title_exact'] && db['title_exact'][0];
+
+                if (approxMovie) {
+                    angular.extend(approxMovie, {indexArr: movieObj.indexArr});
+                    getRating(approxMovie, deferred);
                 }
                 else {
-//                    console.log('no populars[0] for', textToSearch);
+                    //console.log('no movie found for', textToSearch, yearToSearch, angular.copy(db));
                     deferred.reject();
                 }
                 /*End of Logic*/
             })
             .error(function (err) {
-//                console.log('ID data-', err);
+                //console.log('ID data-', err);
                 deferred.reject();
             });
 
@@ -85,12 +87,12 @@ app.service('searchService', ['$http', '$rootScope', '$q', function ($http, $roo
                     item.ratingCount = _ratingData['resource'].ratingCount;
                     item.topRank = _ratingData['resource'].topRank;
                 }
-//                console.log('got item rating:', item);
+                //console.log('got item rating:', item);
                 deferred.resolve(item);
 
             })
             .error(function (err) {
-//                console.log('Rating Err-', err);
+                //console.log('Rating Err-', err);
                 deferred.reject();
             })
     };

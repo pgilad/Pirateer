@@ -8,10 +8,10 @@ var _gaq = _gaq || [];
     ga.src = 'https://ssl.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(ga, s);
+    _gaq.push(['_setAccount', 'UA-43678943-3']);
 })();
 
 app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
-    var isInit = false;
     var shouldQuery = false;
     var movieArray = [];
 
@@ -86,10 +86,7 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
         if (port.name === 'getRating') {
             port.onMessage.addListener(function (msg) {
                 if (msg.type === 'list') {
-                    if (!isInit) {
-                        _gaq.push(['_setAccount', 'UA-43678943-3']);
-                        isInit = true;
-                    }
+
                     _gaq.push(['_trackPageview']);
                     _gaq.push(['_trackEvent', 'Search', 'fromIMDB', decodeURI(port.sender.url)]);
 
@@ -102,5 +99,10 @@ app.run(['searchService', '$rootScope', function (searchService, $rootScope) {
                 }
             });
         }
+    });
+
+    chrome.runtime.onInstalled.addListener(function (details) {
+        var currentVersion = chrome.runtime.getManifest().version || 'Unknown';
+        _gaq.push(['_trackEvent', 'App_Load', details.reason, currentVersion]);
     });
 }]);
