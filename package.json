@@ -14,7 +14,8 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-copy": "~0.4.1",
     "grunt-bumpup": "~0.2.0",
-    "grunt-preprocess": "~3.0.0"
+    "grunt-preprocess": "~3.0.0",
+    "grunt-contrib-clean": "~0.5.0"
   },
   "author": "Gilad Peleg"
 }

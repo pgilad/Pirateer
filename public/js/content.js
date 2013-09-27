@@ -20,6 +20,8 @@ var getRating = function () {
     }
     else {
         console.log('[Pirateer] - No Videos in current page');
+        var port = chrome.runtime.connect({name: "getRating"});
+        port.postMessage({type: 'noVideo'});
     }
 };
 
