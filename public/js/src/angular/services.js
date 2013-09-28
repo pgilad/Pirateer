@@ -223,6 +223,7 @@ app.service('searchService', [
             value = parseInt(value);
 
             var cacheOptions = options.cacheOptions;
+            DEBUG && console.log('sending GA event for settingsChange');
 
             //cacheOptions hasn't changed
             if (value === getCacheOptionsAsValue()) return;
@@ -239,10 +240,9 @@ app.service('searchService', [
             }
 
             //track cacheOptions event change
-            _gaq.push(['_trackEvent', 'settingsChange', 'cacheOptions', value]);
+            _gaq.push(['_trackEvent', 'settingsChange', 'cacheOptions', value.toString()]);
 
             set(options, true);
-
         };
 
         var getCacheOptionsAsValue = function () {
