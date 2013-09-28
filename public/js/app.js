@@ -22,7 +22,7 @@ app.controller('MainCtrl', [
             { displayName : 'Name & Ratings Cache', value: 2, speedLabel: 'label label-info',
                 properties: [
                     'Caches names & ratings to speed search',
-                    'Rating might not be exact',
+                    'Rating might not be up to date',
                     'Blazing Fast'
                 ]
             }
@@ -38,11 +38,28 @@ app.controller('MainCtrl', [
             window.open($scope.targetUrl);
         };
 
+        $scope.cacheCleared = false;
+
+        $scope.clearCache = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            chrome.storage.local.clear(function () {
+                DEBUG && console.log('Cache Cleared');
+                $scope.$apply(function () {
+                    $scope.cacheCleared = true;
+                });
+                $timeout(function () {
+                    $scope.cacheCleared = false;
+                }, 1000);
+            });
+        };
+
         $scope.onChangeSelectedCaching = function (value) {
             ptStorageService.setCacheOptionsByValue(value);
         };
 
-        $scope.searchIMDB = function (searchTerm) {
+        $scope.searchIMDBFromPopup = function (searchTerm) {
             if (!searchTerm) return;
             $scope.targetUrl = 'http://thepiratebay.sx/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
             if (_gaq) {

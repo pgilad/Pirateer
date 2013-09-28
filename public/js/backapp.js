@@ -48,22 +48,28 @@ app.run([
             var movie;
             if (movieList.length && shouldQuery) {
                 movie = movieList.shift();
-                searchService.searchIMDB(movie)
-                    .then(function (item) {
-                        if (shouldQuery) {
-                            for (var j = 0; j < item.indexArr.length; ++j) {
-                                try {
-                                    port.postMessage({type: 'ratingResponse', title: item.title, index: item.indexArr[j], rating: item.rating, id: item.id});
-                                }
-                                catch (e) {
-                                }
+                searchService.searchIMDB(movie).then(function (item) {
+                    if (shouldQuery) {
+                        for (var j = 0; j < item.indexArr.length; ++j) {
+                            try {
+                                port.postMessage({
+                                    type  : 'ratingResponse',
+                                    title : item.title,
+                                    index : item.indexArr[j],
+                                    rating: item.ratingData.rating,
+                                    id    : item.id
+                                });
                             }
-                            onRequestHandler(movieList, port);
+                            catch (e) {
+                            }
                         }
-
-                    }, function (err) {
+                        //goto next movie item
                         onRequestHandler(movieList, port);
-                    });
+                    }
+
+                }, function noMovieFound (err) {
+                    onRequestHandler(movieList, port);
+                });
             }
         }
 
@@ -86,13 +92,10 @@ app.run([
                                 movieArray = [];
                                 prepareList(msg.list);
 
-                                DEBUG && console.log('Got list from content script, starting lookup');
-                                $rootScope.$apply(function () {
-                                    ptStorageService.getCacheOptionsFromStorage(function () {
-                                        $rootScope.$apply(function () {
-                                            onRequestHandler(angular.copy(movieArray, []), port);
-                                        });
-                                    });
+                                DEBUG && console.log('Got list from content script, getting cache options');
+                                ptStorageService.getCacheOptionsFromStorage(function () {
+                                    DEBUG && console.log('Got cache options, starting request sequence');
+                                    onRequestHandler(angular.copy(movieArray, []), port);
                                 });
                             }
                             else if (msg.type === 'noVideo') {

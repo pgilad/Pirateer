@@ -11,7 +11,20 @@ app.service('searchService', [
 
                 //run the actual request to get movie name from string
                 var runRequest = function () {
-                    helpers.getMovieNameRequest(textToSearch, yearToSearch, cacheOptions, movieObj, deferred);
+                    helpers.getMovieNameRequest(textToSearch, yearToSearch, function (err, movieFromImdb) {
+                        if (err) return deferred.reject(err);
+
+                        var selectedMovie = {};
+                        selectedMovie[textToSearch] = movieFromImdb;
+
+                        return helpers.getRatingOfMovie({
+                            selectedMovie       : selectedMovie,
+                            indexArr            : movieObj.indexArr,
+                            deferred            : deferred,
+                            originalSearchString: textToSearch,
+                            cacheOptions        : cacheOptions
+                        });
+                    });
                 };
 
                 //use cached movie names
@@ -22,10 +35,20 @@ app.service('searchService', [
 
                         //movie exists with at least an ID
                         if (item && item[textToSearch] && item[textToSearch].id) {
-                            var _item = item[textToSearch];
-                            helpers.getRatingOfMovie(_item, movieObj, deferred);
+                            item[textToSearch].origin = 'storage';
+
+                            return helpers.getRatingOfMovie({
+                                selectedMovie       : item,
+                                indexArr            : movieObj.indexArr,
+                                deferred            : deferred,
+                                originalSearchString: textToSearch,
+                                cacheOptions        : cacheOptions
+                            });
                         }
-                        else runRequest();
+                        else {
+                            DEBUG && console.debug('Looking up name of movie in IMDB:', textToSearch);
+                            return runRequest();
+                        }
                     });
                 }
                 else runRequest();
@@ -78,70 +101,108 @@ app.service('searchService', [
                     return approxMovie;
                 },
 
-                cacheMovieName: function (textToSearch, yearToSearch, approxMovie) {
-                    var objToStore = {};
-                    objToStore[textToSearch] = angular.copy(approxMovie);
-                    objToStore[textToSearch].year = yearToSearch || null;
-                    ptStorageService.set(objToStore, false);
+                getRatingOfMovie: function (params) {
+
+                    var selectedMovie = params.selectedMovie,
+                        originalSearchString = params.originalSearchString,
+                        indexArr = params.indexArr;
+
+                    angular.extend(selectedMovie[originalSearchString], {indexArr: indexArr});
+                    this.getRating(params);
                 },
 
-                getRatingOfMovie: function (selectedMovie, movieObj, deferred) {
-                    angular.extend(selectedMovie, {indexArr: movieObj.indexArr});
-                    this.getRating(selectedMovie, deferred);
-                },
+                getRating: function (params) {
 
-                getRating: function (item, deferred) {
-                    var ratingURI = this.baseQueries.getRatingURI.replace('AAA', item.id);
+                    //the original search string (used as key to store)
+                    var originalSearchString = params.originalSearchString,
+                    //deferred obj
+                        deferred = params.deferred,
 
-                    $http.get(ratingURI)
+                    //item we use
+                        workingItem = params.selectedMovie[originalSearchString],
+
+                    //the rating URI
+                        ratingURI = this.baseQueries.getRatingURI.replace('AAA', workingItem.id);
+
+                    var isCacheSaveRequired = (workingItem.origin === 'fresh');
+
+                    _.defer(function () {
+                        $rootScope.$apply()
+                    });
+
+                    //check if options allow us to use ratings cache and we have it as well
+                    if (params.cacheOptions.cacheRatings && workingItem.ratingData && workingItem.ratingData.rating) {
+                        return deferred.resolve(workingItem);
+                    }
+
+                    var cacheMovieObject = function (isCacheSaveRequired) {
+                        if (isCacheSaveRequired) {
+                            var _toSave = angular.copy(params.selectedMovie);
+                            _toSave[originalSearchString].origin = 'storage';
+                            _toSave[originalSearchString].indexArr = undefined;
+                            ptStorageService.set(_toSave, false);
+                        }
+                    };
+
+                    return $http.get(ratingURI)
                         .success(function (data) {
-                            var _ratingData = data.substring('imdb.rating.run('.length, data.length - 1);
-                            _ratingData = JSON.parse(_ratingData);
+                            //comes in a format of "imdb.rating.run(JSON)"
+                            var _ratingData = JSON.parse(data.substring('imdb.rating.run('.length, data.length - 1));
 
                             if (_ratingData['resource']) {
-                                item.rating = _ratingData['resource'].rating;
-                                item.year = _ratingData['resource'].year;
-                                item.titleType = _ratingData['resource'].titleType;
-                                item.ratingCount = _ratingData['resource'].ratingCount;
-                                item.topRank = _ratingData['resource'].topRank;
-                                deferred.resolve(item);
+                                workingItem.ratingData = {
+                                    rating     : _ratingData['resource'].rating,
+                                    year       : _ratingData['resource'].year,
+                                    titleType  : _ratingData['resource'].titleType,
+                                    ratingCount: _ratingData['resource'].ratingCount,
+                                    topRank    : _ratingData['resource'].topRank,
+                                    updatedAt  : Date.now()
+                                };
+
+                                cacheMovieObject(true);
+                                deferred.resolve(workingItem);
                             }
                             else {
-                                DEBUG && console.log('IMDB rating response did not have "resource"', item);
+                                DEBUG && console.warn('IMDB rating response did not have "resource"', workingItem);
+                                cacheMovieObject(isCacheSaveRequired);
                                 deferred.reject();
                             }
 
                         })
                         .error(function (err) {
-                            DEBUG && console.log('Failed to get IMDB rating from $http request', item);
+                            DEBUG && console.error('Failed to get IMDB rating from $http request', workingItem);
+                            cacheMovieObject(isCacheSaveRequired);
                             deferred.reject(err);
                         })
                 },
 
-                getMovieNameRequest: function (textToSearch, yearToSearch, cacheOptions, movieObj, deferred) {
+                getMovieNameRequest: function (textToSearch, yearToSearch, callback) {
                     var self = this;
+
+                    _.defer(function () {
+                        $rootScope.$apply()
+                    });
 
                     $http.get(self.baseQueries.getTitleURI + encodeURI(textToSearch)).success(function (data) {
                             var db = {};
                             self.fillDbWithData(db, data, yearToSearch);
 
-                            //TODO begin logic for choosing the best movie id to search
                             var movieFromImdb = self.getMovieFromDbLogic(db);
 
                             if (movieFromImdb) {
                                 //should store names
-                                self.cacheMovieName(textToSearch, yearToSearch, movieFromImdb);
-                                //now get rating
-                                self.getRatingOfMovie(movieFromImdb, movieObj, deferred);
+                                movieFromImdb.origin = 'fresh';
+                                movieFromImdb.updatedAt = Date.now();
+                                return callback(null, movieFromImdb);
                             }
                             else {
-                                DEBUG && console.log('Failed to find a relevant movie name from response', textToSearch, yearToSearch);
-                                deferred.reject();
+                                DEBUG && console.warn('Failed to find a relevant movie name from response', textToSearch, yearToSearch);
+                                return callback('Failed to find a relevant movie name from response');
                             }
                         }
                     ).error(function (err) {
-                            DEBUG && console.log('Failed to get movie name on $http request:', err);
-                            deferred.reject();
+                            DEBUG && console.error('Failed to get movie name on $http request:', err);
+                            callback(err);
                         });
                 }
             }
@@ -149,9 +210,10 @@ app.service('searchService', [
     ])
     .service('ptStorageService', function () {
 
+        //default option values
         var options = {
             cacheOptions: {
-                cacheNames  : false,
+                cacheNames  : true,
                 cacheRatings: false
             }
         };
@@ -176,6 +238,9 @@ app.service('searchService', [
                 cacheOptions.cacheNames = cacheOptions.cacheRatings = false;
             }
 
+            //track cacheOptions event change
+            _gaq.push(['_trackEvent', 'settingsChange', 'cacheOptions', value]);
+
             set(options, true);
 
         };
@@ -187,6 +252,10 @@ app.service('searchService', [
             else return 0;
         };
 
+        /**
+         * @param sync - {boolean} - use sync or local
+         * @returns {*}
+         */
         var getStorageSystem = function (sync) {
             return (sync) ? chrome.storage.sync : chrome.storage.local;
         };
@@ -206,18 +275,25 @@ app.service('searchService', [
         };
 
         var get = function (keys, sync, callback) {
-            callback = callback || angular.noop();
+            if (!angular.isFunction(callback)) callback = angular.noop();
             if (!keys || !keys.length) return callback();
 
-            if (!angular.isDefined(sync)) sync = true;
+            if (!angular.isDefined(sync)) sync = false;
             return getStorageSystem(sync).get(keys, callback);
         };
 
+        /**
+         * Sets an item in chrome.storage
+         * @param saveObj - object to save
+         * @param sync - should set to chrome.storage.sync (false will mean chrome.storage.local)
+         * @param callback - callback function
+         * @returns {*}
+         */
         var set = function (saveObj, sync, callback) {
-            callback = callback || angular.noop();
+            if (!angular.isFunction(callback)) callback = angular.noop();
             if (!saveObj) return callback();
 
-            sync = sync || false;
+            if (!angular.isDefined(sync)) sync = false;
             return getStorageSystem(sync).set(saveObj, callback);
         };
 
