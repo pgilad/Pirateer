@@ -131,7 +131,7 @@ app.service('searchService', [
                     });
 
                     //check if options allow us to use ratings cache and we have it as well
-                    if (params.cacheOptions.cacheRatings && workingItem.ratingData && workingItem.ratingData.rating) {
+                    if (params.cacheOptions.cacheRatings && workingItem.ratingData && workingItem.ratingData.rating && parseFloat(workingItem.ratingData.rating) > 0) {
                         return deferred.resolve(workingItem);
                     }
 
@@ -151,7 +151,7 @@ app.service('searchService', [
 
                             if (_ratingData['resource']) {
                                 workingItem.ratingData = {
-                                    rating     : _ratingData['resource'].rating,
+                                    rating     : _ratingData['resource'].rating || 'No Rating',
                                     year       : _ratingData['resource'].year,
                                     titleType  : _ratingData['resource'].titleType,
                                     ratingCount: _ratingData['resource'].ratingCount,
@@ -190,6 +190,7 @@ app.service('searchService', [
                             var movieFromImdb = self.getMovieFromDbLogic(db);
 
                             if (movieFromImdb) {
+                                DEBUG && console.log('Found the movie in IMDB:', movieFromImdb.title);
                                 //should store names
                                 movieFromImdb.origin = 'fresh';
                                 movieFromImdb.updatedAt = Date.now();
