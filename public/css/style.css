@@ -1,0 +1,97 @@
+body {
+    width: 500px;
+    background: transparent;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.cacheOptions-actions {
+    text-align: left;
+    cursor: pointer;
+    margin-left: 22px;
+}
+
+.main-container {
+    margin: 0;
+    overflow: hidden;
+    z-index: 1050;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+    outline: none;
+}
+
+.top-search {
+    padding: 9px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-submit-search {
+    width: 35px;
+    height: 25px;
+}
+
+.input-search {
+    padding: 2px;
+    width: 60%;
+    height: 25px;
+    font-size: 12px;
+}
+
+.cacheOptions {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.cacheOptions-ul {
+    text-align: left;
+    font-size: 12px;
+}
+
+.support-separator {
+    overflow: visible;
+    position: relative;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.support-separator-inner {
+    padding: 8px;
+    line-height: 18px;
+    text-align: justify;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+    background-color: #f9f9f9;
+    font-size: 12px;
+}
+
+.support-text {
+    margin: 0 0 9px;
+    line-height: 18px;
+}
+
+.contact-separator {
+    padding: 8px;
+    line-height: 18px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+.contact-text {
+    margin: 0 0 9px;
+    line-height: 18px;
+}
+
+.share-separator {
+    padding: 8px;
+    line-height: 18px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+html {
+    background: transparent;
+}

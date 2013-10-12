@@ -71,13 +71,15 @@ app.service('searchService', [
 
                 fillDbWithData: function (db, data, yearToSearch) {
 
-                    var imdbDataOptions = ['title_popular', 'title_substring', 'title_exact'];
+                    var curDataOption,
+                        imdbDataOptions = ['title_popular', 'title_substring', 'title_exact'];
+
                     angular.forEach(imdbDataOptions, function (opt) {
                         db[opt] = [];
                     });
 
                     for (var j = 0; j < imdbDataOptions.length; ++j) {
-                        var curDataOption = imdbDataOptions[j];
+                        curDataOption = imdbDataOptions[j];
 
                         if (!data[curDataOption] || !data[curDataOption].length) continue;
 
@@ -167,7 +169,6 @@ app.service('searchService', [
                                 cacheMovieObject(isCacheSaveRequired);
                                 deferred.reject();
                             }
-
                         })
                         .error(function (err) {
                             DEBUG && console.error('Failed to get IMDB rating from $http request', workingItem);
@@ -221,9 +222,10 @@ app.service('searchService', [
 
         var setCacheOptionsByValue = function (value) {
 
+            var cacheOptions;
             value = parseInt(value);
 
-            var cacheOptions = options.cacheOptions;
+            cacheOptions = options.cacheOptions;
             DEBUG && console.log('sending GA event for settingsChange');
 
             //cacheOptions hasn't changed

@@ -19,6 +19,7 @@ module.exports = function (grunt) {
                 dest: 'dist/<%= pkg.name %>.js'
             }
         },
+
         uglify: {
             options: {
                 compress: {
@@ -41,6 +42,32 @@ module.exports = function (grunt) {
             }
         },
 
+        useminPrepare: {
+            html   : 'index.html',
+            options: {
+                dest: 'build/'
+            }
+        },
+
+        usemin: {
+            html   : ['**/*.html'],
+            css    : ['**/*.css'],
+            options: {
+                dirs: ['temp', 'dist']
+            }
+        },
+
+        cssmin: {
+            add_banner: {
+                options: {
+                    banner: '/* CSS minified file */'
+                },
+                files  : {
+                    'build/style.min.css': ['public/css/**/*.css']
+                }
+            }
+        },
+
         htmlmin: {                                     // Task
             build: {                                      // Target
                 options: {                                 // Target options
@@ -57,13 +84,14 @@ module.exports = function (grunt) {
                 ]
             }
         },
-        copy   : {
+
+        copy: {
             build: {
                 files: [
                     {
                         expand: true,
                         cwd   : 'public/',
-                        src   : ['**/*.*', '!**/*.less', '!**/*.html', '!js/*.js', '!js/src/**/*.js'],
+                        src   : ['manifest.json', 'js/lib/*.js', 'css/**/*.css', 'img/**/*'],
                         dest  : 'build/'
                     }
                 ]

@@ -67,7 +67,7 @@ app.run([
                         onRequestHandler(movieList, port);
                     }
 
-                }, function noMovieFound (err) {
+                }, function noMovieFound(err) {
                     onRequestHandler(movieList, port);
                 });
             }

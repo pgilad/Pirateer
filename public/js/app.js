@@ -28,6 +28,22 @@ app.controller('MainCtrl', [
             }
         ];
 
+        var reportFormAction = _.debounce(function throttle(type) {
+            DEBUG && console.log(type + ' this!');
+            if (_gaq) {
+                if (type === 'mouseEnter') {
+                    _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'mouseOver']);
+                }
+                else if (type === 'submit') {
+                    _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
+                }
+            }
+        }, 1000);
+
+        $scope.reportOver = function (type) {
+            reportFormAction(type);
+        };
+
         ptStorageService.getCacheOptionsFromStorage(function () {
             $scope.$apply(function () {
                 $scope.selectedCaching.value = ptStorageService.getCacheOptionsAsValue();
@@ -38,7 +54,7 @@ app.controller('MainCtrl', [
             window.open($scope.targetUrl);
         };
 
-        $scope.cacheCleared = false;
+        $scope.cacheClearedLabelShow = false;
 
         $scope.clearCache = function (e) {
             e.preventDefault();
@@ -47,10 +63,10 @@ app.controller('MainCtrl', [
             chrome.storage.local.clear(function () {
                 DEBUG && console.log('Cache Cleared');
                 $scope.$apply(function () {
-                    $scope.cacheCleared = true;
+                    $scope.cacheClearedLabelShow = true;
                 });
                 $timeout(function () {
-                    $scope.cacheCleared = false;
+                    $scope.cacheClearedLabelShow = false;
                 }, 1000);
             });
         };
