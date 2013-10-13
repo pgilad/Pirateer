@@ -11,15 +11,22 @@ module.exports = function (grunt) {
         },
 
         concat: {
-
-            dist: {
-                src : ['public/js/src/**/*.js', 'public/js/lib/*.js'],
-                dest: 'build/'
+            build: {
+                options: {
+                    stripBanners: true
+                },
+                dist   : {
+                    files: {
+                        'build/js/app.min.js'    : ['js/lib/*.js', 'js/src/**/*.js', 'js/app.js'],
+                        'build/js/backapp.min.js': ['js/lib/*.js', 'js/src/**/*.js', 'js/backapp.js']
+                    }
+                }
             }
         },
 
         uglify: {
             options: {
+                banner  : '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
                 compress: {
                     global_defs: {
                         "DEBUG": false
@@ -30,51 +37,56 @@ module.exports = function (grunt) {
             build  : {
                 files: [
                     {
-                        expand: true,     // Enable dynamic expansion.
-                        cwd   : 'public/js/',      // Src matches are relative to this path.
-                        src   : ['**/*.js', '!lib/*.js'], // Actual pattern(s) to match.
-                        dest  : 'build/js',   // Destination path prefix.
-                        ext   : '.js'   // Dest filepaths will have this extension.
+                        'build/js/app.min.js'    : [
+                            'public/js/lib/*.js', 'public/js/src/common/init.js', 'public/js/app.js',
+                            'public/js/src/angular/*.js'
+                        ],
+                        'build/js/backapp.min.js': [
+                            'public/js/lib/*.js', 'public/js/src/common/init.js', 'public/js/backapp.js',
+                            'public/js/src/angular/*.js'
+                        ],
+                        'build/js/content.js'    : ['public/js/content.js']
                     }
                 ]
             }
         },
 
         useminPrepare: {
-            html: 'index.html'
+            html: ['public/index.html', 'public/background.html']
         },
 
         usemin: {
             html   : ['build/**/*.html'],
             css    : ['build/**/*.css'],
             options: {
-                dirs: ['temp', 'dist']
+                dirs   : ['build'],
+                basedir: 'build'
             }
         },
 
         cssmin: {
-            add_banner: {
+            build: {
                 options: {
                     banner: '/* CSS minified file */'
                 },
                 files  : {
-                    'build/style.min.css': ['public/css/**/*.css']
+                    'build/css/style.min.css': ['public/css/**/*.css']
                 }
             }
         },
 
-        htmlmin: {                                     // Task
-            build: {                                      // Target
-                options: {                                 // Target options
+        htmlmin: {
+            build: {
+                options: {
                     removeComments    : true,
                     collapseWhitespace: true
                 },
-                files  : [
+
+                files: [
                     {
                         expand: true,     // Enable dynamic expansion.
-                        cwd   : 'public/',      // Src matches are relative to this path.
-                        src   : ['*.html'], // Actual pattern(s) to match.
-                        dest  : 'build/'   // Destination path prefix
+                        cwd   : 'build/',      // Src matches are relative to this path.
+                        src   : ['*.html'] // Actual pattern(s) to match.
                     }
                 ]
             }
@@ -86,7 +98,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd   : 'public/',
-                        src   : ['manifest.json', 'js/lib/*.js', 'css/**/*.css', 'img/**/*'],
+                        src   : ['manifest.json', 'img/**/*', '*.html'],
                         dest  : 'build/'
                     }
                 ]
@@ -106,6 +118,6 @@ module.exports = function (grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.registerTask('build', [
-        'clean:build', 'bumpup:patch', 'useminPrepare', 'cssmin', 'uglifyJs', 'uglify:build', 'usemin', 'htmlmin:build'
+        'clean:build', 'bumpup:patch', 'useminPrepare', 'cssmin:build', 'copy:build', 'uglify:build', 'usemin'
     ]);
 };
