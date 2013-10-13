@@ -11,12 +11,10 @@ module.exports = function (grunt) {
         },
 
         concat: {
-            options: {
-                separator: ';'
-            },
-            dist   : {
-                src : ['src/**/*.js'],
-                dest: 'dist/<%= pkg.name %>.js'
+
+            dist: {
+                src : ['public/js/src/**/*.js', 'public/js/lib/*.js'],
+                dest: 'build/'
             }
         },
 
@@ -43,15 +41,12 @@ module.exports = function (grunt) {
         },
 
         useminPrepare: {
-            html   : 'index.html',
-            options: {
-                dest: 'build/'
-            }
+            html: 'index.html'
         },
 
         usemin: {
-            html   : ['**/*.html'],
-            css    : ['**/*.css'],
+            html   : ['build/**/*.html'],
+            css    : ['build/**/*.css'],
             options: {
                 dirs: ['temp', 'dist']
             }
@@ -110,5 +105,7 @@ module.exports = function (grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('build', ['bumpup:patch' , 'clean:build', 'uglify:build', 'htmlmin:build', 'copy:build']);
+    grunt.registerTask('build', [
+        'clean:build', 'bumpup:patch', 'useminPrepare', 'cssmin', 'uglifyJs', 'uglify:build', 'usemin', 'htmlmin:build'
+    ]);
 };
