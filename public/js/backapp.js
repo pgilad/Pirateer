@@ -1,3 +1,8 @@
+//TODO don't display links if no videos
+//TODO series ratings
+//TODO amazon affiliates
+//TODO IMDB cross site search to pirate bay
+
 app.run([
     'searchService', '$rootScope', 'ptStorageService', function (searchService, $rootScope, ptStorageService) {
 
@@ -53,14 +58,16 @@ app.run([
                         for (var j = 0; j < item.indexArr.length; ++j) {
                             try {
                                 port.postMessage({
-                                    type  : 'ratingResponse',
-                                    title : item.title,
-                                    index : item.indexArr[j],
-                                    rating: item.ratingData.rating,
-                                    id    : item.id
+                                    type        : 'ratingResponse',
+                                    title       : item.title,
+                                    index       : item.indexArr[j],
+                                    rating      : item.ratingData.rating,
+                                    id          : item.id,
+                                    textToSearch: item.textToSearch
                                 });
                             }
                             catch (e) {
+                                DEBUG && console.log('error posting response back:', e);
                             }
                         }
                         //goto next movie item
@@ -76,6 +83,7 @@ app.run([
         chrome.runtime.onConnect.addListener(function (port) {
 
                 port.onDisconnect.addListener(function () {
+                    DEBUG && console.log('Disconnected!');
                     shouldQuery = false;
                     port.onMessage.removeListener();
                 });
@@ -86,7 +94,7 @@ app.run([
                             if (msg.type === 'list') {
 
                                 _gaq.push(['_trackPageview']);
-                                _gaq.push(['_trackEvent', 'Search', 'fromIMDB', decodeURI(port.sender.url)]);
+                                _gaq.push(['_trackEvent', 'Search', 'fromPirateBay', decodeURI(port.sender.url)]);
 
                                 shouldQuery = true;
                                 movieArray = [];
@@ -100,10 +108,24 @@ app.run([
                             }
                             else if (msg.type === 'noVideo') {
                                 _gaq.push(['_trackPageview']);
-                                _gaq.push(['_trackEvent', 'Search', 'fromIMDB-noVideo', decodeURI(port.sender.url)]);
+                                _gaq.push([
+                                    '_trackEvent', 'Search', 'fromPirateBay-noVideo', decodeURI(port.sender.url)
+                                ]);
+                            }
+                            else if (msg.type === 'imdbLinkClick') {
+                                DEBUG && console.log('Got follow up links from Piratebay:', msg.item);
+                                _gaq.push(['_trackEvent', 'LinkClick', 'fromPirateBay', msg.item.href]);
                             }
                         }
                     );
+                }
+                else if (port.name === 'imdbReport') {
+                    port.onMessage.addListener(function (msg) {
+                        if (msg.type === 'track') {
+                            _gaq.push(['_trackPageview']);
+                            _gaq.push(['_trackEvent', 'imdbTrack', 'fromIMDB', msg.href]);
+                        }
+                    });
                 }
             }
         );

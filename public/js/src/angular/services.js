@@ -16,6 +16,7 @@ app.service('searchService', [
 
                         var selectedMovie = {};
                         selectedMovie[textToSearch] = movieFromImdb;
+                        selectedMovie[textToSearch].textToSearch = textToSearch;
 
                         return helpers.getRatingOfMovie({
                             selectedMovie       : selectedMovie,
@@ -36,6 +37,7 @@ app.service('searchService', [
                         //movie exists with at least an ID
                         if (item && item[textToSearch] && item[textToSearch].id) {
                             item[textToSearch].origin = 'storage';
+                            item[textToSearch].textToSearch = textToSearch;
 
                             return helpers.getRatingOfMovie({
                                 selectedMovie       : item,
