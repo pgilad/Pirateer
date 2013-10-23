@@ -1,6 +1,8 @@
 //globals
 var app = angular.module('app', []);
 if (typeof DEBUG === 'undefined') DEBUG = true;
+
+/** @global **/
 var _gaq = _gaq || [];
 
 (function () {

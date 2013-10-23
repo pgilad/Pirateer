@@ -28,20 +28,21 @@ app.controller('MainCtrl', [
             }
         ];
 
-        var reportFormAction = _.debounce(function throttle(type) {
-            DEBUG && console.log(type + ' this!');
-            if (_gaq) {
-                if (type === 'mouseEnter') {
-                    _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'mouseOver']);
-                }
-                else if (type === 'submit') {
-                    _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
-                }
-            }
+        var reportOverDonations = _.debounce(function () {
+            _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'mouseOver']);
+        }, 2000);
+
+        var reportClickDonations = _.debounce(function () {
+            _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
         }, 1000);
 
         $scope.reportOver = function (type) {
-            reportFormAction(type);
+            if (type === 'mouseEnter') {
+                reportOverDonations();
+            }
+            else if (type === 'submit') {
+                reportClickDonations(type);
+            }
         };
 
         ptStorageService.getCacheOptionsFromStorage(function () {

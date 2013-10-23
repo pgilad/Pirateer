@@ -222,13 +222,18 @@ app.service('searchService', [
             }
         };
 
+        var setCacheOptionsVar = function (value) {
+            _gaq.push(['_setCustomVar', 5, 'cacheOptions', value.toString(), 1],
+                ['_trackEvent', 'settingsChange', 'cacheOptions', value.toString()]
+            );
+        };
+
         var setCacheOptionsByValue = function (value) {
 
             var cacheOptions;
             value = parseInt(value);
 
             cacheOptions = options.cacheOptions;
-            DEBUG && console.log('sending GA event for settingsChange');
 
             //cacheOptions hasn't changed
             if (value === getCacheOptionsAsValue()) return;
@@ -244,8 +249,8 @@ app.service('searchService', [
                 cacheOptions.cacheNames = cacheOptions.cacheRatings = false;
             }
 
-            //track cacheOptions event change
-            _gaq.push(['_trackEvent', 'settingsChange', 'cacheOptions', value.toString()]);
+            DEBUG && console.log('sending GA event for settingsChange');
+            setCacheOptionsVar(value);
 
             set(options, true);
         };
@@ -262,6 +267,9 @@ app.service('searchService', [
          * @returns {*}
          */
         var getStorageSystem = function (sync) {
+            /** @namespace chrome.storage */
+            /** @namespace chrome.storage.sync */
+            /** @namespace chrome.storage.local */
             return (sync) ? chrome.storage.sync : chrome.storage.local;
         };
 
@@ -270,11 +278,24 @@ app.service('searchService', [
                 var cacheOptions = options.cacheOptions;
 
                 //set with default values
-                if (!item || !item.cacheOptions) set(options, true);
+                if (!item || !item.cacheOptions) {
+                    set(options, true);
+
+                }
                 else {
                     cacheOptions.cacheNames = item.cacheOptions.cacheNames || false;
                     cacheOptions.cacheRatings = item.cacheOptions.cacheRatings || false;
                 }
+
+                //if visitor level cacheOptions not set, set it (legacy mainly)
+                _gaq.push(function () {
+                    var pageTracker = _gat._getTrackerByName(); // Gets the default tracker.
+                    var cacheTrack = pageTracker._getVisitorCustomVar(5);
+                    if (typeof cacheTrack === 'undefined') {
+                        setCacheOptionsVar(getCacheOptionsAsValue());
+                    }
+                });
+
                 callback(cacheOptions);
             });
         };
@@ -289,9 +310,9 @@ app.service('searchService', [
 
         /**
          * Sets an item in chrome.storage
-         * @param saveObj - object to save
-         * @param sync - should set to chrome.storage.sync (false will mean chrome.storage.local)
-         * @param callback - callback function
+         * @param {Object} saveObj - object to save
+         * @param {Boolean} [sync=false] should set to chrome.storage.sync (false will mean chrome.storage.local)
+         * @param {Function} [callback=] callback function
          * @returns {*}
          */
         var set = function (saveObj, sync, callback) {
