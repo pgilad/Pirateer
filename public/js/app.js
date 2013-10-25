@@ -6,6 +6,10 @@ app.controller('MainCtrl', [
         $scope.targetUrl = '';
         $scope.selectedCaching = {};
 
+        /**
+         * CachingOptions
+         * @type {Array}
+         */
         $scope.cachingOptions = [
             { displayName : 'Comprehensive', value: 0, speedLabel: 'label label-warning',
                 properties: [
@@ -30,13 +34,28 @@ app.controller('MainCtrl', [
 
         var reportOverDonations = _.debounce(function () {
             _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'mouseOver']);
-        }, 2000);
-
-        var reportClickDonations = _.debounce(function () {
-            _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
         }, 1000);
 
-        $scope.reportOver = function (type) {
+        var submitForm = function () {
+            document.querySelector('#paypalForm').submit();
+        };
+
+        var reportClickDonations = _.debounce(function () {
+
+            if (_gaq) {
+                _gaq.push(['_set', 'hitCallback', submitForm]);
+                _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
+            } else {
+                submitForm();
+            }
+        }, 100);
+
+        $scope.reportOver = function (e, type) {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+
             if (type === 'mouseEnter') {
                 reportOverDonations();
             }
@@ -51,12 +70,20 @@ app.controller('MainCtrl', [
             });
         });
 
-        var openNewWindow = function () {
-            window.open($scope.targetUrl);
+        /** Open a new window *
+         * @param {string} url
+         */
+        var openNewWindow = function (url) {
+            url = url || $scope.targetUrl;
+            window.open(url);
         };
 
         $scope.cacheClearedLabelShow = false;
 
+        /**
+         * Clears the cache for local storage
+         * @param {Event} e
+         */
         $scope.clearCache = function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -66,25 +93,38 @@ app.controller('MainCtrl', [
                 $scope.$apply(function () {
                     $scope.cacheClearedLabelShow = true;
                 });
+
                 $timeout(function () {
                     $scope.cacheClearedLabelShow = false;
                 }, 1000);
             });
         };
 
+        /**
+         * Set the value of cacheOptions in storage according to value passed in
+         * @param {number} value
+         */
         $scope.onChangeSelectedCaching = function (value) {
             ptStorageService.setCacheOptionsByValue(value);
         };
-
+        /**
+         * searchIMDBFromPopup - searches for a searchTerm in the piratebay
+         * @param {String} searchTerm
+         */
         $scope.searchIMDBFromPopup = function (searchTerm) {
             if (!searchTerm) return;
-            $scope.targetUrl = 'http://thepiratebay.sx/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
+            var targetUrl = 'http://thepiratebay.sx/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
             if (_gaq) {
-                _gaq.push(['_set', 'hitCallback', openNewWindow]);
+                _gaq.push([
+                    '_set', 'hitCallback', function () {
+                        openNewWindow(targetUrl)
+                    }
+                ]);
                 _gaq.push(['_trackEvent', 'Search', 'fromPopup', searchTerm]);
             } else {
-                openNewWindow();
+                openNewWindow(targetUrl);
             }
+            //open the window anyway if the callback wasn't called
             $timeout(openNewWindow, 500);
         }
     }
