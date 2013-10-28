@@ -1,6 +1,6 @@
 {
     "name": "Pirateer",
-    "version": "0.4.27",
+    "version": "0.4.28",
     "manifest_version": 2,
     "author": "Gilad Peleg",
     "description": "Pirateer is a new web application that adds IMDb ratings to TV shows and movies on The Pirate Bay",

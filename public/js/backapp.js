@@ -135,7 +135,7 @@ app.run([
                             }
                             else if (msg.type === 'imdbSupportClick') {
                                 DEBUG && console.log('Got support link click:', msg.item);
-                                _gaq.push(['_trackEvent', 'LinkClick', 'fromPirateBay', msg.item.url]);
+                                _gaq.push(['_trackEvent', 'reviewLinkClick', 'fromPirateBay', msg.item.url]);
                                 ptStorageService.options.supportLinkClick = true;
                                 ptStorageService.set(ptStorageService.options, 'sync');
                             }
