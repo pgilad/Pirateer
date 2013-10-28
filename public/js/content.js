@@ -89,7 +89,7 @@
                 //if it's a movie then get it's name
                 if (helperFunctions.isVideo(categoryFirstLine, categorySecondLine)) {
                     movieObj = {
-                        name : $currentTr.find('div.detName').text(),
+                        name : $currentTr.find('div.detName')[0].innerText,
                         index: i
                     };
                     movieListByName.push(movieObj);

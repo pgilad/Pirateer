@@ -53,25 +53,28 @@ app.run([
             if (movieList.length && shouldQuery) {
                 movie = movieList.shift();
                 searchService.searchIMDB(movie).then(function (item) {
-                    if (shouldQuery) {
-                        for (var j = 0; j < item.indexArr.length; ++j) {
-                            try {
-                                port.postMessage({
-                                    type        : 'ratingResponse',
-                                    title       : item.title,
-                                    index       : item.indexArr[j],
-                                    rating      : item.ratingData.rating,
-                                    id          : item.id,
-                                    textToSearch: item.textToSearch
-                                });
-                            }
-                            catch (e) {
-                                DEBUG && console.log('error posting response back:', e);
-                            }
-                        }
-                        //goto next movie item
+                    if (!shouldQuery) {
                         onRequestHandler(movieList, port);
+                        return;
                     }
+
+                    for (var j = 0; j < item.indexArr.length; ++j) {
+                        try {
+                            port.postMessage({
+                                type        : 'ratingResponse',
+                                title       : item.title,
+                                index       : item.indexArr[j],
+                                rating      : item.ratingData.rating,
+                                id          : item.id,
+                                textToSearch: item.textToSearch
+                            });
+                        }
+                        catch (e) {
+                            DEBUG && console.log('error posting response back:', e);
+                        }
+                    }
+                    //goto next movie item
+                    onRequestHandler(movieList, port);
 
                 }, function noMovieFound(err) {
                     onRequestHandler(movieList, port);
