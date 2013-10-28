@@ -30,7 +30,7 @@ app.run([
                     //trim ending spaces
                     .replace(/\s$/, '');
 
-                var possibleYear = /\d{4}/g.exec(_movieString);
+                var possibleYear = /\d{4}(?!p)/g.exec(_movieString);
 
                 if (possibleYear) {
                     title = _movieString.substring(0, possibleYear.index - 1);

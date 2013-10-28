@@ -3,7 +3,6 @@ _gaq.push(['_trackPageview']);
 app.controller('MainCtrl', [
     '$scope', '$timeout', 'ptStorageService', function ($scope, $timeout, ptStorageService) {
 
-        $scope.targetUrl = '';
         $scope.selectedCaching = {};
 
         /**
@@ -32,24 +31,27 @@ app.controller('MainCtrl', [
             }
         ];
 
+        /**
+         *
+         * @type {*}
+         */
         var reportOverDonations = _.debounce(function () {
             _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'mouseOver']);
         }, 1000);
 
+        /**
+         *
+         */
         var submitForm = function () {
+            DEBUG && console.log('Submitting paypal form');
             document.querySelector('#paypalForm').submit();
         };
 
-        var reportClickDonations = _.debounce(function () {
-
-            if (_gaq) {
-                _gaq.push(['_set', 'hitCallback', submitForm]);
-                _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
-            } else {
-                submitForm();
-            }
-        }, 100);
-
+        /**
+         * Report a mouseover /click event on paypal
+         * @param e
+         * @param type
+         */
         $scope.reportOver = function (e, type) {
             if (e) {
                 e.stopPropagation();
@@ -60,25 +62,37 @@ app.controller('MainCtrl', [
                 reportOverDonations();
             }
             else if (type === 'submit') {
-                reportClickDonations(type);
+                if (_gaq) {
+                    DEBUG && console.log('Detected gaq - pushing submitForm to hitcallback');
+                    _gaq.push([
+                        '_set', 'hitCallback', function () {
+                            submitForm();
+                            _gaq.push(['_set', 'hitCallback', null]);
+                        }
+                    ]);
+                    _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
+                } else {
+                    submitForm();
+                }
             }
         };
 
+        /**
+         * Get the cache options from storage space (sync)
+         */
         ptStorageService.getCacheOptionsFromStorage(function () {
             $scope.$apply(function () {
                 $scope.selectedCaching.value = ptStorageService.getCacheOptionsAsValue();
             });
         });
 
-        /** Open a new window *
+        /**
+         * Open a new window
          * @param {string} url
          */
         var openNewWindow = function (url) {
-            url = url || $scope.targetUrl;
             window.open(url);
         };
-
-        $scope.cacheClearedLabelShow = false;
 
         /**
          * Clears the cache for local storage
@@ -117,7 +131,8 @@ app.controller('MainCtrl', [
             if (_gaq) {
                 _gaq.push([
                     '_set', 'hitCallback', function () {
-                        openNewWindow(targetUrl)
+                        openNewWindow(targetUrl);
+                        _gaq.push(['_set', 'hitCallback', null]);
                     }
                 ]);
                 _gaq.push(['_trackEvent', 'Search', 'fromPopup', searchTerm]);

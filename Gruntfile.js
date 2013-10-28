@@ -17,8 +17,8 @@ module.exports = function (grunt) {
                 },
                 dist   : {
                     files: {
-                        'build/js/app.min.js'    : ['js/lib/*.js', 'js/src/**/*.js', 'js/app.js'],
-                        'build/js/backapp.min.js': ['js/lib/*.js', 'js/src/**/*.js', 'js/backapp.js']
+                        'build/js/app.min.js'    : ['js/vendor/*.js', 'js/src/**/*.js', 'js/app.js'],
+                        'build/js/backapp.min.js': ['js/vendor/*.js', 'js/src/**/*.js', 'js/backapp.js']
                     }
                 }
             }
@@ -38,11 +38,11 @@ module.exports = function (grunt) {
                 files: [
                     {
                         'build/js/app.min.js'    : [
-                            'public/js/lib/*.js', 'public/js/src/common/init.js', 'public/js/app.js',
+                            'public/js/vendor/*.js', 'public/js/src/common/init.js', 'public/js/app.js',
                             'public/js/src/angular/*.js'
                         ],
                         'build/js/backapp.min.js': [
-                            'public/js/lib/*.js', 'public/js/src/common/init.js', 'public/js/backapp.js',
+                            'public/js/vendor/*.js', 'public/js/src/common/init.js', 'public/js/backapp.js',
                             'public/js/src/angular/*.js'
                         ],
                         'build/js/content.js'    : ['public/js/content.js']
