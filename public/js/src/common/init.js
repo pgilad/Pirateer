@@ -1,3 +1,5 @@
+/*!
+ * init.js */
 //globals
 var app = angular.module('app', []);
 if (typeof DEBUG === 'undefined') DEBUG = true;

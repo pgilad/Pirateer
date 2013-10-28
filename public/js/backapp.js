@@ -2,6 +2,8 @@
 //TODO amazon affiliates
 //TODO IMDB cross site search to pirate bay
 
+/*!
+ * backapp.js */
 app.run([
     'searchService', '$rootScope', 'ptStorageService', function (searchService, $rootScope, ptStorageService) {
 
@@ -58,13 +60,16 @@ app.run([
                         return;
                     }
 
-                    for (var j = 0; j < item.indexArr.length; ++j) {
+                    _.each(item.indexArr, function (sendItem) {
                         try {
                             port.postMessage({
                                 type        : 'ratingResponse',
                                 title       : item.title,
-                                index       : item.indexArr[j],
+                                index       : sendItem,
                                 rating      : item.ratingData.rating,
+                                ratingCount : item.ratingData.ratingCount,
+                                topRank     : item.ratingData.topRank,
+                                year        : item.ratingData.year,
                                 id          : item.id,
                                 textToSearch: item.textToSearch
                             });
@@ -72,13 +77,17 @@ app.run([
                         catch (e) {
                             DEBUG && console.log('error posting response back:', e);
                         }
-                    }
+                    });
+
                     //goto next movie item
                     onRequestHandler(movieList, port);
 
                 }, function noMovieFound(err) {
                     onRequestHandler(movieList, port);
                 });
+            }
+            else {
+                port.postMessage({type: 'endResponse'});
             }
         }
 

@@ -1,3 +1,5 @@
+/*!
+ * app.js */
 _gaq.push(['_trackPageview']);
 
 app.controller('MainCtrl', [

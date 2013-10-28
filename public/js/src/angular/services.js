@@ -1,3 +1,5 @@
+/*!
+ * services.js */
 app.service('searchService', [
         '$http', '$q', 'ptStorageService', 'ptSearchHelpers', function ($http, $q, ptStorageService, ptSearchHelpers) {
 
@@ -73,29 +75,30 @@ app.service('searchService', [
 
                 fillDbWithData: function (db, data, yearToSearch) {
 
-                    var curDataOption,
-                        imdbDataOptions = ['title_popular', 'title_substring', 'title_exact'];
+                    var imdbDataOptions = ['title_popular', 'title_substring', 'title_exact'];
 
                     angular.forEach(imdbDataOptions, function (opt) {
                         db[opt] = [];
                     });
 
-                    for (var j = 0; j < imdbDataOptions.length; ++j) {
-                        curDataOption = imdbDataOptions[j];
+                    _.each(imdbDataOptions, function (curDataOption) {
+                        if (!data[curDataOption] || !data[curDataOption].length) {
+                            return;
+                        }
 
-                        if (!data[curDataOption] || !data[curDataOption].length) continue;
-
-                        for (var i = 0; i < data[curDataOption].length && i < 3; ++i) {
-                            var _year = parseInt(data[curDataOption][i].description.substring(0, 4));
+                        _.each(data[curDataOption], function (item) {
+                            var _year = parseInt(item.description.substring(0, 4));
                             //check for year dif
-                            if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch - _year) > 1) continue;
+                            if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch - _year) > 1) {
+                                return;
+                            }
 
                             db[curDataOption].push({
-                                id   : data[curDataOption][i].id,
-                                title: data[curDataOption][i].title
+                                id   : item.id,
+                                title: item.title
                             });
-                        }
-                    }
+                        });
+                    })
                 },
 
                 getMovieFromDbLogic: function (db) {
@@ -200,7 +203,7 @@ app.service('searchService', [
                                 return callback(null, movieFromImdb);
                             }
                             else {
-                                DEBUG && console.warn('Failed to find a relevant movie name from response', textToSearch, yearToSearch);
+                                DEBUG && console.warn('Failed to find a relevant movie name from response', textToSearch, yearToSearch, data);
                                 return callback('Failed to find a relevant movie name from response');
                             }
                         }

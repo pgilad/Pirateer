@@ -10,24 +10,11 @@ module.exports = function (grunt) {
             ]
         },
 
-        concat: {
-            build: {
-                options: {
-                    stripBanners: true
-                },
-                dist   : {
-                    files: {
-                        'build/js/app.min.js'    : ['js/vendor/*.js', 'js/src/**/*.js', 'js/app.js'],
-                        'build/js/backapp.min.js': ['js/vendor/*.js', 'js/src/**/*.js', 'js/backapp.js']
-                    }
-                }
-            }
-        },
-
         uglify: {
             options: {
-                banner  : '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
-                compress: {
+                banner          : '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
+                preserveComments: 'some',
+                compress        : {
                     global_defs: {
                         "DEBUG": false
                     },
@@ -38,14 +25,25 @@ module.exports = function (grunt) {
                 files: [
                     {
                         'build/js/app.min.js'    : [
-                            'public/js/vendor/*.js', 'public/js/src/common/init.js', 'public/js/app.js',
+                            'public/js/vendor/angular.min.js',
+                            'public/js/vendor/lodash.min.js',
+                            'public/js/src/common/init.js',
+                            'public/js/app.js',
                             'public/js/src/angular/*.js'
                         ],
                         'build/js/backapp.min.js': [
-                            'public/js/vendor/*.js', 'public/js/src/common/init.js', 'public/js/backapp.js',
+                            'public/js/vendor/angular.min.js',
+                            'public/js/vendor/lodash.min.js',
+                            'public/js/src/common/init.js',
+                            'public/js/backapp.js',
                             'public/js/src/angular/*.js'
                         ],
-                        'build/js/content.js'    : ['public/js/content.js']
+                        'build/js/content.js'    : [
+                            'public/js/vendor/jquery-2.0.3.min.js',
+                            'public/js/vendor/jquery.contextMenu.js',
+                            'public/js/vendor/jquery.ui.position.js',
+                            'public/js/content.js'
+                        ]
                     }
                 ]
             }
@@ -70,7 +68,8 @@ module.exports = function (grunt) {
                     banner: '/* CSS minified file */'
                 },
                 files  : {
-                    'build/css/style.min.css': ['public/css/**/*.css']
+                    'build/css/style.min.css'        : ['public/css/vendor/bootstrap.min.css', 'public/css/style.css'],
+                    'build/css/content_style.min.css': ['public/css/vendor/jquery.contextMenu.css']
                 }
             }
         },
@@ -98,7 +97,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd   : 'public/',
-                        src   : ['manifest.json', 'img/**/*', '*.html'],
+                        src   : ['img/**/*', '*.html', 'js/vendor/jquery-2.0.3.min.map'],
                         dest  : 'build/'
                     }
                 ]
@@ -117,7 +116,25 @@ module.exports = function (grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
+    grunt.registerTask('buildManifest', function () {
+        var tmpPkg = require('./public/manifest.json');
+
+        console.log(process.cwd());
+
+        tmpPkg["content_scripts"][0]["js"] = ['js/content.js'];
+        tmpPkg["content_scripts"][0]["css"] = ['css/content_style.min.css'];
+
+        require('fs').writeFileSync('./build/manifest.json', JSON.stringify(tmpPkg, null, 2));
+    });
+
     grunt.registerTask('build', [
-        'clean:build', 'bumpup:patch', 'useminPrepare', 'cssmin:build', 'copy:build', 'uglify:build', 'usemin'
+        'clean:build',
+        'bumpup:patch',
+        'useminPrepare',
+        'cssmin:build',
+        'copy:build',
+        'uglify:build',
+        'buildManifest',
+        'usemin'
     ]);
 };
