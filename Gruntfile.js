@@ -24,21 +24,19 @@ module.exports = function (grunt) {
             build  : {
                 files: [
                     {
-                        'build/js/app.min.js'    : [
+                        'build/js/includes.min.js': [
                             'public/js/vendor/angular.min.js',
                             'public/js/vendor/lodash.min.js',
                             'public/js/src/common/init.js',
-                            'public/js/app.js',
                             'public/js/src/angular/*.js'
                         ],
-                        'build/js/backapp.min.js': [
-                            'public/js/vendor/angular.min.js',
-                            'public/js/vendor/lodash.min.js',
-                            'public/js/src/common/init.js',
-                            'public/js/backapp.js',
-                            'public/js/src/angular/*.js'
+                        'build/js/app.min.js'     : [
+                            'public/js/app.js'
                         ],
-                        'build/js/content.js'    : [
+                        'build/js/backapp.min.js' : [
+                            'public/js/backapp.js'
+                        ],
+                        'build/js/content.js'     : [
                             'public/js/vendor/jquery-2.0.3.min.js',
                             'public/js/vendor/jquery.contextMenu.js',
                             'public/js/vendor/jquery.ui.position.js',
