@@ -98,6 +98,12 @@ app.run([
                                 _gaq.push(['_trackPageview']);
                                 _gaq.push(['_trackEvent', 'Search', 'fromPirateBay', decodeURI(port.sender.url)]);
 
+                                ptStorageService.getIfUserClickedSupport(function (response) {
+                                    DEBUG && console.debug('Checked if user has clicked support and got', response.supportLinkClick);
+                                    var showSupportLink = response.supportLinkClick ? false : true;
+                                    port.postMessage({type: 'showSupportLink', shouldShow: showSupportLink});
+                                });
+
                                 shouldQuery = true;
                                 movieArray = [];
                                 prepareList(msg.list);
@@ -117,6 +123,12 @@ app.run([
                             else if (msg.type === 'imdbLinkClick') {
                                 DEBUG && console.log('Got follow up links from Piratebay:', msg.item);
                                 _gaq.push(['_trackEvent', 'LinkClick', 'fromPirateBay', msg.item.href]);
+                            }
+                            else if (msg.type === 'imdbSupportClick') {
+                                DEBUG && console.log('Got support link click:', msg.item);
+                                _gaq.push(['_trackEvent', 'LinkClick', 'fromPirateBay', msg.item.url]);
+                                ptStorageService.options.supportLinkClick = true;
+                                ptStorageService.set(ptStorageService.options, 'sync');
                             }
                         }
                     );

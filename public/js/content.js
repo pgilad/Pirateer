@@ -6,6 +6,7 @@
             movieFound = false;
 
         var getRatingFromBackground = function () {
+            var showSupportLink = true;
             if (!movieListByName.length) {
                 console.log('[Pirateer] - No Videos in current page');
                 var port = chrome.runtime.connect({name: "getRating"});
@@ -17,7 +18,11 @@
             port.postMessage({type: 'list', list: movieListByName});
             port.onMessage.addListener(function (msg) {
 
-                if (msg.type !== 'ratingResponse' || typeof msg.index === 'undefined') {
+                if (msg.type === 'showSupportLink' && typeof msg.shouldShow !== 'undefined') {
+                    showSupportLink = msg.shouldShow;
+                    return;
+                }
+                else if (msg.type !== 'ratingResponse' || typeof msg.index === 'undefined') {
                     return;
                 }
 
@@ -25,6 +30,29 @@
                     movieFound = true;
                     helperFunctions.applyHeader();
                     helperFunctions.generateTds(rawMovieList);
+
+                    if (showSupportLink) {
+                        //compile support element
+                        var $supportElement = $('<a target="_blank">Support Pirateer by rating on the Chrome Web Store</a>')
+                            .attr('href', 'https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd/reviews')
+                            .attr('title', 'Support Pirateer')
+                            .css('font-size', '13px')
+                            .css('float', 'right')
+                            .css('border-bottom-style', 'none')
+                            .css('cursor', 'pointer')
+                            .on('click', function () {
+                                port.postMessage({
+                                    type: 'imdbSupportClick',
+                                    item: {
+                                        url: document.URL
+                                    }
+                                });
+                                this.innerText = 'Thank you for rating!';
+                                this.off('click');
+                            });
+
+                        $supportElement.insertBefore($('table#searchResult'));
+                    }
                 }
 
                 //compile element
@@ -32,19 +60,20 @@
                     .attr('title', msg.title + ' - IMDB' || null)
                     .attr('href', 'http://www.imdb.com/title/' + msg.id + '/')
                     .attr('data-title', msg.title)
+                    .attr('target', '_blank')
                     .attr('data-id', msg.id)
-                    .attr('data-text-to-search', msg.textToSearch);
-
-                rawMovieList[msg.index].find('td.imdb').append($element).onclick = function () {
-                    port.postMessage({
-                        type: 'imdbLinkClick',
-                        item: {
-                            textToSearch: this['data-text-to-search'],
-                            href        : this['href']
-                        }
+                    .attr('data-text-to-search', msg.textToSearch)
+                    .on('click', function () {
+                        port.postMessage({
+                            type: 'imdbLinkClick',
+                            item: {
+                                textToSearch: this['data-text-to-search'],
+                                href        : this['href']
+                            }
+                        });
                     });
-                }
 
+                rawMovieList[msg.index].find('td.imdb').append($element);
             });
         };
 
@@ -71,13 +100,12 @@
         };
 
         var pirateBayMain = function () {
-            var itemFound = false,
-                $category,
+            var $category,
                 $currentTr,
                 movieObj;
 
             //allTrList will include all trs, except header
-            var allTrList = $('tbody tr');
+            var allTrList = $('table#searchResult tbody tr');
 
             //find all category==movie
             for (var i = 0; allTrList, i < allTrList.length; ++i) {

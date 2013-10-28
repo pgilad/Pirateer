@@ -32,7 +32,7 @@ app.service('searchService', [
                 if (cacheOptions.cacheNames) {
 
                     //try to find cached movie name
-                    ptStorageService.get(textToSearch, false, function (item) {
+                    ptStorageService.get(textToSearch, 'local', function (item) {
 
                         //movie exists with at least an ID
                         if (item && item[textToSearch] && item[textToSearch].id) {
@@ -144,7 +144,7 @@ app.service('searchService', [
                             var _toSave = angular.copy(params.selectedMovie);
                             _toSave[originalSearchString].origin = 'storage';
                             _toSave[originalSearchString].indexArr = undefined;
-                            ptStorageService.set(_toSave, false);
+                            ptStorageService.set(_toSave, 'local');
                         }
                     };
 
@@ -216,10 +216,11 @@ app.service('searchService', [
 
         //default option values
         var options = {
-            cacheOptions: {
+            cacheOptions    : {
                 cacheNames  : true,
                 cacheRatings: false
-            }
+            },
+            supportLinkClick: false
         };
 
         var setCacheOptionsVar = function (value) {
@@ -252,7 +253,7 @@ app.service('searchService', [
             DEBUG && console.log('sending GA event for settingsChange');
             setCacheOptionsVar(value);
 
-            set(options, true);
+            set(options, 'sync');
         };
 
         var getCacheOptionsAsValue = function () {
@@ -263,23 +264,30 @@ app.service('searchService', [
         };
 
         /**
-         * @param sync - {boolean} - use sync or local
-         * @returns {*}
+         * @param {String} storageType - use sync or local
+         * @returns {chrome.storage.sync|chrome.storage.local} StorageType
          */
-        var getStorageSystem = function (sync) {
+        var getStorageSystem = function (storageType) {
             /** @namespace chrome.storage */
             /** @namespace chrome.storage.sync */
             /** @namespace chrome.storage.local */
-            return (sync) ? chrome.storage.sync : chrome.storage.local;
+            return (storageType === 'sync') ? chrome.storage.sync : chrome.storage.local;
+        };
+
+        var getIfUserClickedSupport = function (callback) {
+            get('supportLinkClick', 'sync', function (item) {
+                options.supportLinkClick = item.supportLinkClick;
+                callback(item);
+            })
         };
 
         var getCacheOptionsFromStorage = function (callback) {
-            get('cacheOptions', true, function (item) {
+            get('cacheOptions', 'sync', function (item) {
                 var cacheOptions = options.cacheOptions;
 
                 //set with default values
                 if (!item || !item.cacheOptions) {
-                    set(options, true);
+                    set(options, 'sync');
 
                 }
                 else {
@@ -300,27 +308,26 @@ app.service('searchService', [
             });
         };
 
-        var get = function (keys, sync, callback) {
+        var get = function (keys, storageType, callback) {
             if (!angular.isFunction(callback)) callback = angular.noop();
             if (!keys || !keys.length) return callback();
-
-            if (!angular.isDefined(sync)) sync = false;
-            return getStorageSystem(sync).get(keys, callback);
+            storageType = storageType || 'local';
+            return getStorageSystem(storageType).get(keys, callback);
         };
 
         /**
          * Sets an item in chrome.storage
          * @param {Object} saveObj - object to save
-         * @param {Boolean} [sync=false] should set to chrome.storage.sync (false will mean chrome.storage.local)
+         * @param {String} [storageType='local'] should set to chrome.storage.sync (false will mean chrome.storage.local)
          * @param {Function} [callback=] callback function
          * @returns {*}
          */
-        var set = function (saveObj, sync, callback) {
+        var set = function (saveObj, storageType, callback) {
             if (!angular.isFunction(callback)) callback = angular.noop();
             if (!saveObj) return callback();
 
-            if (!angular.isDefined(sync)) sync = false;
-            return getStorageSystem(sync).set(saveObj, callback);
+            storageType = storageType || 'local';
+            return getStorageSystem(storageType).set(saveObj, callback);
         };
 
         return {
@@ -329,6 +336,7 @@ app.service('searchService', [
             getCacheOptionsFromStorage: getCacheOptionsFromStorage,
             getCacheOptionsAsValue    : getCacheOptionsAsValue,
             setCacheOptionsByValue    : setCacheOptionsByValue,
+            getIfUserClickedSupport   : getIfUserClickedSupport,
             options                   : options
         }
     });
