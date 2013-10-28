@@ -1,4 +1,3 @@
-//TODO don't display links if no videos
 //TODO series ratings
 //TODO amazon affiliates
 //TODO IMDB cross site search to pirate bay

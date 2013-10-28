@@ -1,8 +1,9 @@
 (function (document) {
 
     var pirateBayScript = function () {
-        var rawMovieList = [];
-        var movieListByName = [];
+        var rawMovieList = [],
+            movieListByName = [],
+            movieFound = false;
 
         var getRatingFromBackground = function () {
             if (!movieListByName.length) {
@@ -10,100 +11,92 @@
                 var port = chrome.runtime.connect({name: "getRating"});
                 port.postMessage({type: 'noVideo'});
                 return;
-
             }
 
             var port = chrome.runtime.connect({name: "getRating"});
             port.postMessage({type: 'list', list: movieListByName});
             port.onMessage.addListener(function (msg) {
-                if (msg.type === 'ratingResponse' && typeof msg.index !== 'undefined') {
-                    var a = document.createElement('a');
-                    var linkText = document.createTextNode(msg.rating);
-                    a.appendChild(linkText);
-                    a.title = msg.title + ' - IMDB' || null;
-                    a.href = "http://www.imdb.com/title/" + msg.id + '/';
-                    a['data-title'] = msg.title;
-                    a['data-id'] = msg.id;
-                    a['data-text-to-search'] = msg.textToSearch;
-                    rawMovieList[msg.index].querySelector('td.imdb').appendChild(a).onclick = function () {
-                        port.postMessage({
-                            type: 'imdbLinkClick',
-                            item: {
-                                textToSearch: this['data-text-to-search'],
-                                href        : this['href']
-                            }
-                        });
-                    }
+
+                if (msg.type !== 'ratingResponse' || typeof msg.index === 'undefined') {
+                    return;
                 }
+
+                if (!movieFound) {
+                    movieFound = true;
+                    helperFunctions.applyHeader();
+                    helperFunctions.generateTds(rawMovieList);
+                }
+
+                //compile element
+                var $element = $('<a>' + msg.rating + '</a>')
+                    .attr('title', msg.title + ' - IMDB' || null)
+                    .attr('href', 'http://www.imdb.com/title/' + msg.id + '/')
+                    .attr('data-title', msg.title)
+                    .attr('data-id', msg.id)
+                    .attr('data-text-to-search', msg.textToSearch);
+
+                rawMovieList[msg.index].find('td.imdb').append($element).onclick = function () {
+                    port.postMessage({
+                        type: 'imdbLinkClick',
+                        item: {
+                            textToSearch: this['data-text-to-search'],
+                            href        : this['href']
+                        }
+                    });
+                }
+
             });
         };
 
         var helperFunctions = {
             /**
-             * Append a child to parent (header)
-             * @param header
-             * @param td
-             * @param node
-             */
-            appendChildToParent: function (header, td, node) {
-                td.style.textAlign = 'center';
-                td.appendChild(node);
-                header.appendChild(td);
-            },
-            /**
              * Apply a header to IMDB
-             * @returns {boolean}
              */
-            applyHeader        : function () {
-                var _header = document.querySelector("tr.header");
-                var _node = document.createTextNode("IMDB Rating");
-                var _td = document.createElement("th");
-                this.appendChildToParent(_header, _td, _node);
-                return true;
+            applyHeader: function () {
+                $('tr.header').append('<th style="text-align:center;">IMDB Rating</th>');
             },
+
             /**
-             * Apply TD of a movie
-             * @param element
-             * @param movieObj
+             * @param rawMovieList
              */
-            applyTD            : function (element, movieObj) {
-                rawMovieList.push(element);
-                if (movieObj) movieListByName.push(movieObj);
-                var _nodeRating = document.createTextNode('');
-                var _tdRating = document.createElement("td");
-                _tdRating.className = 'imdb';
-
-                this.appendChildToParent(element, _tdRating, _nodeRating);
+            generateTds: function (rawMovieList) {
+                for (var i = 0; i < rawMovieList.length; ++i) {
+                    rawMovieList[i].append('<td style="text-align:center;" class="imdb"></td>');
+                }
             },
 
-            isCategoryVideo: function (category) {
-                return category && category[0] && category[0].innerText && category[0].innerText === 'Video';
+            isVideo: function (categoryFirstLine, categorySecondLine) {
+                return categoryFirstLine === 'Video' && categorySecondLine.match(/movie/gi);
             }
         };
 
         var pirateBayMain = function () {
             var itemFound = false,
-                _movieName = null,
-                category,
-                isVideo,
+                $category,
+                $currentTr,
                 movieObj;
 
             //allTrList will include all trs, except header
-            var allTrList = document.querySelectorAll("tbody tr");
+            var allTrList = $('tbody tr');
 
             //find all category==movie
             for (var i = 0; allTrList, i < allTrList.length; ++i) {
-                category = allTrList[i].querySelectorAll('.vertTh a');
-                isVideo = helperFunctions.isCategoryVideo(category);
-                //if it's a movie then get it's name
-                _movieName = (isVideo) ? allTrList[i].querySelector('div.detName').innerText : null;
-                //build movieObj if it's a movie
-                movieObj = (_movieName) ? {name: _movieName, index: i} : null;
-                if (!itemFound && isVideo) itemFound = true;
-                helperFunctions.applyTD(allTrList[i], movieObj);
-            }
+                $currentTr = $(allTrList[i]);
+                $category = $currentTr.find('.vertTh a');
+                var categoryFirstLine = $category.eq(0).text();
+                var categorySecondLine = $category.eq(1).text();
 
-            if (itemFound) helperFunctions.applyHeader();
+                //if it's a movie then get it's name
+                if (helperFunctions.isVideo(categoryFirstLine, categorySecondLine)) {
+                    movieObj = {
+                        name : $currentTr.find('div.detName').text(),
+                        index: i
+                    };
+                    movieListByName.push(movieObj);
+                }
+                //build movieObj if it's a movie
+                rawMovieList.push($currentTr);
+            }
 
             getRatingFromBackground();
         };
@@ -137,4 +130,5 @@
 
     init();
 
-})(document);
+})
+    (document);
