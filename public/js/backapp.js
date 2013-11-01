@@ -109,7 +109,7 @@ app.run([
                     port.onMessage.addListener(function (msg) {
                             if (msg.type === 'list') {
 
-                                _gaq.push(['_trackPageview']);
+                                _gaq.push(['_trackPageview', decodeURI(port.sender.url)]);
                                 _gaq.push(['_trackEvent', 'Search', 'fromPirateBay', decodeURI(port.sender.url)]);
 
                                 ptStorageService.getIfUserClickedSupport(function (response) {
@@ -129,7 +129,7 @@ app.run([
                                 });
                             }
                             else if (msg.type === 'noVideo') {
-                                _gaq.push(['_trackPageview']);
+                                _gaq.push(['_trackPageview', decodeURI(port.sender.url)]);
                                 _gaq.push([
                                     '_trackEvent', 'Search', 'fromPirateBay-noVideo', decodeURI(port.sender.url)
                                 ]);
@@ -150,8 +150,12 @@ app.run([
                 else if (port.name === 'imdbReport') {
                     port.onMessage.addListener(function (msg) {
                         if (msg.type === 'track') {
-                            _gaq.push(['_trackPageview']);
-                            _gaq.push(['_trackEvent', 'imdbTrack', 'fromIMDB', msg.href]);
+                            DEBUG && console.log('Got IMDB site track');
+                            _gaq.push(['_trackPageview', msg.href]);
+                        }
+                        else if (msg.type === 'imdbSearchPirateBay') {
+                            DEBUG && console.log('User clicked on Search Pirate Bay from IMDB link', msg.item.url);
+                            _gaq.push(['_trackEvent', 'Search', 'fromIMDB', msg.item.url || msg.item.title]);
                         }
                     });
                 }

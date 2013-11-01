@@ -3,6 +3,7 @@
 (function (window) {
 
     //define helpers object
+    /** @namespace */
     window.Pirateer = window.Pirateer || {};
     window.Pirateer.helpers = window.Pirateer.helpers || {};
     var helpers = window.Pirateer.helpers;
@@ -24,10 +25,20 @@
             }
         },
 
+        /**
+         * Whether an item is a video (movie for now)
+         * @param categoryFirstLine
+         * @param categorySecondLine
+         * @returns {Boolean}
+         */
         isVideo: function isVideo(categoryFirstLine, categorySecondLine) {
-            return categoryFirstLine === 'Video' && categorySecondLine.match(/movie/gi);
+            var second = categorySecondLine.match(/movie/gi);
+            return categoryFirstLine === 'Video' && second && second.length;
         },
 
+        /**
+         *
+         */
         reportNoMovies: function () {
             console.log('[Pirateer] - No Videos in current page');
             helpers.port = chrome.runtime.connect({name: "getRating"});
@@ -35,7 +46,7 @@
         },
 
         /**
-         *
+         * Fill 2 param arrays with movies
          * @param {Array} movieListByName
          * @param {Array} rawMovieList
          */
@@ -60,6 +71,7 @@
                         name : $currentTr.find('div.detName')[0].innerText,
                         index: i
                     };
+
                     movieListByName.push(movieObj);
                 }
                 //build movieObj if it's a movie
@@ -67,6 +79,11 @@
             }
         },
 
+        /**
+         * Returns jQuery compiled element
+         * @param msg
+         * @returns {jQuery}
+         */
         getCompiledTdElement: function (msg) {
             //compile element
             return $('<a>' + msg.rating + '</a>')
@@ -84,9 +101,28 @@
                 .attr('data-text-to-search', msg.textToSearch);
         },
 
+        /**
+         *
+         * @returns {jQuery}
+         */
+        getSmallPirateerImage: function () {
+            var imgUrl = chrome.extension.getURL('img/icon_19x19.png');
+            return $('<img>')
+                .css('margin', 'auto')
+                .css('vertical-align', 'middle')
+                .attr('src', imgUrl);
+        },
+
+        /**
+         * Adds the support by reviewing link
+         */
         insertSupportLink: function () {
             //compile support element
-            var $supportElement = $('<a target="_blank">Support Pirateer by rating on the Chrome Web Store</a>')
+
+            var $pImg = helpers.helperFunctions.getSmallPirateerImage().css('float', 'left').css('margin-right', '5px');
+
+            $('<a></a>')
+                .attr('target', '_blank')
                 .attr('href', 'https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd/reviews')
                 .attr('title', 'Support Pirateer')
                 .attr('class', 'imdb-support-link')
@@ -101,13 +137,16 @@
                             url: document.URL
                         }
                     });
-                    this.innerText = 'Thank you for rating!';
-                    this.off('click');
-                });
-
-            $supportElement.insertBefore($('table#searchResult'));
+                    $(this).text('Pirateer thanks you for rating!').append($pImg).off('click');
+                })
+                .insertBefore($('table#searchResult'))
+                .text('Support Pirateer by Rating Us on the Chrome Web Store')
+                .append($pImg)
         },
 
+        /**
+         * Adds context menu usage the the imdb links
+         */
         addContextMenu: function () {
             //add context menu to links
             $.contextMenu({
@@ -124,6 +163,7 @@
                     };
 
                     var ratingCount = $trigger.dataset.ratingCount;
+
                     if ($.isNumeric(ratingCount)) {
                         items['ratingCount'] = {name: 'Rating Count: ' + ratingCount};
                     }
@@ -162,6 +202,11 @@
         }
     };
 
+    /**
+     * Handles the First Movie response back - draw header and apply TDs
+     * @param {Array} rawMovieList
+     * @param {Array} showSupportLink
+     */
     helpers.handleFirstMovieFound = function (rawMovieList, showSupportLink) {
         helpers.helperFunctions.applyHeader();
         helpers.helperFunctions.generateTds(rawMovieList);
@@ -170,6 +215,10 @@
         showSupportLink && helpers.helperFunctions.insertSupportLink();
     };
 
+    /**
+     * @param movieListByName
+     * @param rawMovieList
+     */
     helpers.handleEndResponse = function (movieListByName, rawMovieList) {
         window.setTimeout(function window_setTimeout() {
             rawMovieList = movieListByName = [];
@@ -218,10 +267,15 @@
         });
     };
 
+    /**
+     * Run the Pirate Bay Script
+     * @param url
+     */
     helpers.pirateBayScript = function (url) {
         var rawMovieList = [], movieListByName = [];
 
         helpers.helperFunctions.fillArraysWithMovies(movieListByName, rawMovieList);
+
         if (!movieListByName.length) {
             helpers.helperFunctions.reportNoMovies();
             rawMovieList.length = movieListByName.length = 0;
@@ -235,10 +289,38 @@
 
     /**
      * Handle IMDB logic, will trigger if we get to IMDB pages
+     * @param url
      */
     helpers.imdbScript = function imdbScript(url) {
         helpers.port = chrome.runtime.connect({name: "imdbReport"});
         helpers.port.postMessage({type: 'track', href: url});
+
+        var insertElm = $('td#overview-bottom .wlb_classic_wrapper');
+
+        if (insertElm && insertElm.length) {
+            var movieTitle = $('meta[property="og:title"]').attr('content');
+            var $pImg = helpers.helperFunctions.getSmallPirateerImage();
+            var $pirateButton = $('<a></a>')
+                .attr('target', '_blank')
+                .attr('href', 'http://thepiratebay.sx/search/' + encodeURIComponent(movieTitle) + '/0/99/0')
+                .addClass('btn2 large primary btn2_glyph_on btn2_text_on')
+                .css('font-size', '12px')
+                .attr('title', 'Search On Piratebay')
+                .attr('target', '_blank')
+                .append('<span class="btn2_text">Search In ThePirateBay</span>')
+                .append($pImg)
+                .on('click', function () {
+                    helpers.port.postMessage({
+                        type: 'imdbSearchPirateBay',
+                        item: {
+                            url      : document.URL,
+                            movieName: movieTitle
+                        }
+                    });
+                });
+
+            insertElm.before($pirateButton);
+        }
     };
 
 })(window);
