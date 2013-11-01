@@ -28,7 +28,7 @@ module.exports = function (grunt) {
                             'public/js/vendor/angular.min.js',
                             'public/js/vendor/lodash.min.js',
                             'public/js/src/common/init.js',
-                            'public/js/src/angular/*.js'
+                            'public/js/src/angular/**/*.js'
                         ],
                         'build/js/app.min.js'     : [
                             'public/js/app.js'
@@ -40,6 +40,7 @@ module.exports = function (grunt) {
                             'public/js/vendor/jquery-2.0.3.min.js',
                             'public/js/vendor/jquery.contextMenu.js',
                             'public/js/vendor/jquery.ui.position.js',
+                            'public/js/content-helpers.js',
                             'public/js/content.js'
                         ]
                     }
@@ -115,14 +116,18 @@ module.exports = function (grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.registerTask('buildManifest', function () {
-        var tmpPkg = require('./public/manifest.json');
 
-        console.log(process.cwd());
+        var manifestPath = {
+            input : './public/manifest.json',
+            output: './build/manifest.json'
+        };
+
+        var tmpPkg = require(manifestPath.input);
 
         tmpPkg["content_scripts"][0]["js"] = ['js/content.js'];
         tmpPkg["content_scripts"][0]["css"] = ['css/content_style.min.css'];
 
-        require('fs').writeFileSync('./build/manifest.json', JSON.stringify(tmpPkg, null, 2));
+        require('fs').writeFileSync(manifestPath.output, JSON.stringify(tmpPkg, null, 2));
     });
 
     grunt.registerTask('build', [

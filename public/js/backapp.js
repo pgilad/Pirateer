@@ -87,7 +87,12 @@ app.run([
                 });
             }
             else {
-                port.postMessage({type: 'endResponse'});
+                try {
+                    port.postMessage({type: 'endResponse'});
+                }
+                catch (e) {
+                    DEBUG && console.log('error posting response back:', e);
+                }
             }
         }
 
