@@ -14,6 +14,7 @@ app.run([
             var title, year;
             for (var i = 0; i < list.length; ++i) {
                 var _movieString = list[i].name;
+                var movieType = list[i].movieType;
 
                 _movieString = _movieString
                     //lose all dots
@@ -40,6 +41,10 @@ app.run([
                 else {
                     title = _movieString;
                     year = null;
+                }
+
+                if (movieType === 'tvShow') {
+                    title = title.split(/Season/gi)[0].split(/S(\d{2})E(\d{2})/gi)[0];
                 }
 
                 //if movie not found

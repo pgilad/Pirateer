@@ -75,7 +75,7 @@ app.service('searchService', [
 
                 fillDbWithData: function (db, data, yearToSearch) {
 
-                    var imdbDataOptions = ['title_popular', 'title_substring', 'title_exact'];
+                    var imdbDataOptions = ['title_popular', 'title_substring', 'title_exact', 'title_approx'];
 
                     angular.forEach(imdbDataOptions, function (opt) {
                         db[opt] = [];
@@ -87,9 +87,9 @@ app.service('searchService', [
                         }
 
                         _.each(data[curDataOption], function (item) {
-                            var _year = parseInt(item.description.substring(0, 4));
+                            var yearFromImdb = parseInt(item.description.substring(0, 4));
                             //check for year dif
-                            if (angular.isNumber(yearToSearch) && angular.isNumber(_year) && Math.abs(yearToSearch - _year) > 1) {
+                            if (angular.isNumber(yearToSearch) && angular.isNumber(yearFromImdb) && Math.abs(yearToSearch - yearFromImdb) > 1) {
                                 return;
                             }
 
@@ -103,8 +103,8 @@ app.service('searchService', [
 
                 getMovieFromDbLogic: function (db) {
                     var approxMovie = db['title_popular'] && db['title_popular'][0];
-                    if (!approxMovie) approxMovie = db['title_substring'] && db['title_substring'][0];
                     if (!approxMovie) approxMovie = db['title_exact'] && db['title_exact'][0];
+                    if (!approxMovie) approxMovie = db['title_substring'] && db['title_substring'][0];
                     return approxMovie;
                 },
 
@@ -191,8 +191,8 @@ app.service('searchService', [
 
                     $http.get(self.baseQueries.getTitleURI + encodeURI(textToSearch)).success(function (data) {
                             var db = {};
-                            self.fillDbWithData(db, data, yearToSearch);
 
+                            self.fillDbWithData(db, data, yearToSearch);
                             var movieFromImdb = self.getMovieFromDbLogic(db);
 
                             if (movieFromImdb) {

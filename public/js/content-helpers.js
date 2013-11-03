@@ -29,11 +29,19 @@
          * Whether an item is a video (movie for now)
          * @param categoryFirstLine
          * @param categorySecondLine
-         * @returns {Boolean}
+         * @returns {string|Null}
          */
         isVideo: function isVideo(categoryFirstLine, categorySecondLine) {
-            var second = categorySecondLine.match(/movie/gi);
-            return categoryFirstLine === 'Video' && second && second.length;
+            if (categoryFirstLine === 'Video') {
+                if (categorySecondLine.match(/TV shows/gi)) {
+                    return 'tvShow';
+                }
+                else if (categorySecondLine.match(/Movie/gi)) {
+                    return 'Movie';
+                }
+            }
+
+            return null;
         },
 
         /**
@@ -66,10 +74,13 @@
                 var categorySecondLine = $category.eq(1).text();
 
                 //if it's a movie then get it's name
-                if (helpers.helperFunctions.isVideo(categoryFirstLine, categorySecondLine)) {
+
+                var movieType = helpers.helperFunctions.isVideo(categoryFirstLine, categorySecondLine)
+                if (movieType) {
                     movieObj = {
-                        name : $currentTr.find('div.detName')[0].innerText,
-                        index: i
+                        name     : $currentTr.find('div.detName')[0].innerText,
+                        movieType: movieType,
+                        index    : i
                     };
 
                     movieListByName.push(movieObj);
@@ -205,7 +216,7 @@
     /**
      * Handles the First Movie response back - draw header and apply TDs
      * @param {Array} rawMovieList
-     * @param {Array} showSupportLink
+     * @param {Boolean} showSupportLink
      */
     helpers.handleFirstMovieFound = function (rawMovieList, showSupportLink) {
         helpers.helperFunctions.applyHeader();
@@ -296,7 +307,6 @@
         helpers.port.postMessage({type: 'track', href: url});
 
         var insertElm = $('td#overview-bottom .wlb_classic_wrapper');
-
         if (insertElm && insertElm.length) {
             var movieTitle = $('meta[property="og:title"]').attr('content');
             var $pImg = helpers.helperFunctions.getSmallPirateerImage();
