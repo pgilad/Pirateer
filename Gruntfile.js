@@ -1,8 +1,9 @@
 module.exports = function (grunt) {
 
     grunt.initConfig({
-        pkg   : grunt.file.readJSON('package.json'),
-        banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
+        pkg     : grunt.file.readJSON('package.json'),
+        manifest: grunt.file.readJSON('public/manifest.json'),
+        banner  : 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
 
         bumpup: {
             files: [
@@ -10,7 +11,7 @@ module.exports = function (grunt) {
             ]
         },
 
-        uglify: {
+        uglify  : {
             options: {
                 banner          : '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
                 preserveComments: 'some',
@@ -45,6 +46,21 @@ module.exports = function (grunt) {
                         ]
                     }
                 ]
+            }
+        },
+
+        // make a zipfile
+        compress: {
+            build: {
+                options: {
+                    archive: 'workspace/versions/pirateer <%= manifest.version %>.zip',
+                    mode   : 'zip',
+                    level  : 6
+                },
+
+                expand: true,
+                cwd   : 'build/',
+                src   : ['**/*']
             }
         },
 
@@ -138,6 +154,7 @@ module.exports = function (grunt) {
         'copy:build',
         'uglify:build',
         'buildManifest',
-        'usemin'
+        'usemin',
+        'compress:build'
     ]);
 };
