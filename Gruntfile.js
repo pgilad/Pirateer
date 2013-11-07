@@ -1,13 +1,18 @@
 module.exports = function (grunt) {
 
     grunt.initConfig({
+        config  : {
+            src : 'public',
+            dist: 'build'
+        },
         pkg     : grunt.file.readJSON('package.json'),
         manifest: grunt.file.readJSON('public/manifest.json'),
-        banner  : 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
+
+        banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
 
         bumpup: {
             files: [
-                'public/manifest.json'
+                '<%= config.src %>/manifest.json'
             ]
         },
 
@@ -25,24 +30,24 @@ module.exports = function (grunt) {
             build  : {
                 files: [
                     {
-                        'build/js/includes.min.js': [
-                            'public/js/vendor/angular.min.js',
-                            'public/js/vendor/lodash.min.js',
-                            'public/js/src/common/init.js',
-                            'public/js/src/angular/**/*.js'
+                        '<%= config.dist %>/js/includes.min.js': [
+                            '<%= config.src %>/js/vendor/angular.min.js',
+                            '<%= config.src %>/js/vendor/lodash.min.js',
+                            '<%= config.src %>/js/src/common/init.js',
+                            '<%= config.src %>/js/src/angular/**/*.js'
                         ],
-                        'build/js/app.min.js'     : [
-                            'public/js/app.js'
+                        '<%= config.dist %>/js/app.min.js'     : [
+                            '<%= config.src %>/js/app.js'
                         ],
-                        'build/js/backapp.min.js' : [
-                            'public/js/backapp.js'
+                        '<%= config.dist %>/js/backapp.min.js' : [
+                            '<%= config.src %>/js/backapp.js'
                         ],
-                        'build/js/content.js'     : [
-                            'public/js/vendor/jquery-2.0.3.min.js',
-                            'public/js/vendor/jquery.contextMenu.js',
-                            'public/js/vendor/jquery.ui.position.js',
-                            'public/js/content-helpers.js',
-                            'public/js/content.js'
+                        '<%= config.dist %>/js/content.js'     : [
+                            '<%= config.src %>/js/vendor/jquery-2.0.3.min.js',
+                            '<%= config.src %>/js/vendor/jquery.contextMenu.js',
+                            '<%= config.src %>/js/vendor/jquery.ui.position.js',
+                            '<%= config.src %>/js/content-helpers.js',
+                            '<%= config.src %>/js/content.js'
                         ]
                     }
                 ]
@@ -59,18 +64,18 @@ module.exports = function (grunt) {
                 },
 
                 expand: true,
-                cwd   : 'build/',
+                cwd   : '<%= config.dist %>/',
                 src   : ['**/*']
             }
         },
 
         useminPrepare: {
-            html: ['public/index.html', 'public/background.html']
+            html: ['<%= config.src %>/index.html', '<%= config.src %>/background.html']
         },
 
         usemin: {
-            html   : ['build/**/*.html'],
-            css    : ['build/**/*.css'],
+            html   : ['<%= config.dist %>/**/*.html'],
+            css    : ['<%= config.dist %>/**/*.css'],
             options: {
                 dirs   : ['build'],
                 basedir: 'build'
@@ -83,8 +88,12 @@ module.exports = function (grunt) {
                     banner: '/* CSS minified file */'
                 },
                 files  : {
-                    'build/css/style.min.css'        : ['public/css/vendor/bootstrap.min.css', 'public/css/style.css'],
-                    'build/css/content_style.min.css': ['public/css/vendor/jquery.contextMenu.css']
+                    '<%= config.dist %>/css/style.min.css'        : [
+                        '<%= config.src %>/css/vendor/bootstrap.min.css', '<%= config.src %>/css/style.css'
+                    ],
+                    '<%= config.dist %>/css/content_style.min.css': [
+                        '<%= config.src %>/css/vendor/jquery.contextMenu.css'
+                    ]
                 }
             }
         },
@@ -99,7 +108,7 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,     // Enable dynamic expansion.
-                        cwd   : 'build/',      // Src matches are relative to this path.
+                        cwd   : '<%= config.dist %>/',      // Src matches are relative to this path.
                         src   : ['*.html'] // Actual pattern(s) to match.
                     }
                 ]
@@ -111,16 +120,16 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd   : 'public/',
+                        cwd   : '<%= config.src %>/',
                         src   : ['img/**/*', '*.html', 'js/vendor/jquery-2.0.3.min.map'],
-                        dest  : 'build/'
+                        dest  : '<%= config.dist %>/'
                     }
                 ]
             }
         },
 
         clean: {
-            build: ["build/"]
+            build: ["<%= config.dist %>/"]
         },
 
         watch: {
