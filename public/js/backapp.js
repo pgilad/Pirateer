@@ -1,6 +1,4 @@
-//TODO series ratings
 //TODO amazon affiliates
-//TODO IMDB cross site search to pirate bay
 
 /*!
  * backapp.js */
@@ -169,6 +167,10 @@ app.run([
 
         chrome.runtime.onInstalled.addListener(function (details) {
             var currentVersion = chrome.runtime.getManifest().version || 'Unknown';
+            //don't log chrome_update events. Not interesting in an app level
+            if (details.reason === 'chrome_update') {
+                return;
+            }
             _gaq.push(['_trackEvent', 'App_Load', details.reason, currentVersion]);
         });
     }
