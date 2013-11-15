@@ -2,6 +2,12 @@
  * app.js */
 _gaq.push(['_trackPageview']);
 
+(function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+
 app.controller('MainCtrl', [
     '$scope', '$timeout', 'ptStorageService', function ($scope, $timeout, ptStorageService) {
 
