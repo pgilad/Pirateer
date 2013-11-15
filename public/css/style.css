@@ -30,7 +30,7 @@ body {
 }
 
 .btn-submit-search {
-    width: 35px;
+    width: 45px;
     height: 25px;
 }
 
@@ -93,6 +93,7 @@ body {
     text-align: left;
     vertical-align: top;
     border-top: 1px solid #dddddd;
+    background-color: #f9f9f9;
 }
 
 html {

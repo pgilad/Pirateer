@@ -2,6 +2,7 @@
 <html ng-csp ng-app="app">
 <head>
     <title>Pirateer</title>
+
     <!-- build:css css/style.min.css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/style.css"/>
@@ -23,21 +24,24 @@
 <div class="main-container">
     <div class="top-search">
 
-        <h3>Search The Piratebay.sx!</h3>
+        <h3>Search The Piratebay.sx</h3>
 
         <form ng-submit="searchIMDBFromPopup(searchTerm)">
-            <input ng-model="searchTerm" type="text" autofocus placeholder="Enter search term..." class="input-search"/>
-            <button type="submit" class="btn-submit-search">Go!</button>
+            <div class="col-xs-7">
+                <input ng-model="searchTerm" type="text" autofocus placeholder="Enter search term..."
+                       class="form-control input-sm"/>
+            </div>
+            <button type="submit" class="btn btn-default btn-sm">Search</button>
         </form>
 
     </div>
     <div class="cacheOptions">
-        <h3>
+        <h4>
             Search Method:
-        </h3>
+        </h4>
 
         <div class="btn-group" style="font-size:12px;">
-            <label ng-repeat="option in cachingOptions" class="btn"
+            <label ng-repeat="option in cachingOptions" class="btn" style="border-radius:10px"
                    ng-class="{'btn-info': selectedCaching.value == $index}">
                 <input type="radio" ng-change="onChangeSelectedCaching(selectedCaching.value)"
                        value="{{ option.value }}" name="cachingOptionsRadio" ng-model="selectedCaching.value">
@@ -60,12 +64,11 @@
 
     <div class="support-separator">
         <div class="support-separator-inner">
-            <h4>Support the Pirateer Project with a donation of just 5$</h4>
+            <h4>Become a <strong>PATRON</strong> of Pirateer</h4>
 
             <p class="support-text">
-                Do you enjoy Pirateer? So do we. We have big plans to make it better but need your support
-                to help pay off server & development costs. Support us by donating 5$ which will all go
-                into improving Pirateer IMDB.
+                Pay for Pirateer's development & server costs. Pirateer is <i>free</i> for use, but if you find
+                Pirateer useful, and want to see it living, pay for our services.
             </p>
 
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="paypalForm" target="_blank"
@@ -85,11 +88,10 @@
                 Have questions, found a bug, wanna suggest something? Email us at:
                 <a href="mailto:pirateerimdb@gmail.com">pirateerimdb@gmail.com</a>
             </p>
-        </div>
 
-        <div class="share-separator">
-            <strong>Help other people find Pirateer!</strong>
-            &nbsp;&nbsp;
+            <div style="display:block">
+                <strong>Recommend Pirateer to others!</strong>
+            </div>
 
             <iframe allowtransparency="true" frameborder="0" scrolling="no"
                     src="https://platform.twitter.com/widgets/tweet_button.1375828408.html#_=1376766487385&amp;count=horizontal&amp;id=twitter-widget-0&amp;lang=en&amp;size=m&amp;text=I%20am%20using%20Pirateer%20to%20enrichen%20my%20Piratebay%20with%20IMDB%20ratings&amp;via=pirateerIMDB"
