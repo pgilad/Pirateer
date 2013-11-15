@@ -1,2 +1,3 @@
 build
-bower_components
+public/bower_components
+build/bower_components

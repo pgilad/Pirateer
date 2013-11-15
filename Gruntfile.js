@@ -89,7 +89,7 @@ module.exports = function (grunt) {
                 },
                 files  : {
                     '<%= config.dist %>/css/style.min.css'        : [
-                        '<%= config.src %>/css/vendor/bootstrap.min.css', '<%= config.src %>/css/style.css'
+                        '<%= config.src %>/bower_components/bootstrap/dist/css/bootstrap.min.css', '<%= config.src %>/css/style.css'
                     ],
                     '<%= config.dist %>/css/content_style.min.css': [
                         '<%= config.src %>/css/vendor/jquery.contextMenu.css'
