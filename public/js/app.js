@@ -14,8 +14,11 @@ _gaq.push(['_trackPageview']);
 angular.module('app').controller('MainCtrl', [
     '$scope', '$timeout', function ($scope, $timeout) {
 
+        $scope.openOptionsPage = function () {
+            chrome.tabs.create({url: 'options.html'});
+        };
+
         /**
-         *
          * @type {*}
          */
         var reportOverDonations = _.debounce(function () {

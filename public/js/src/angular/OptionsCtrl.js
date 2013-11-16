@@ -44,6 +44,10 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
 
     $scope.toggleCachedItemsDisplay = function () {
         $scope.showCachedItems = !$scope.showCachedItems;
+        if ($scope.showCachedItems) {
+            _gaq.push(['_trackEvent', 'settings', 'cachedItems', 'show'])
+        }
+
     };
 
     $scope.selectedCaching = {};
@@ -84,14 +88,6 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
     });
 
     /**
-     * Open a new window
-     * @param {string} url
-     */
-    var openNewWindow = function (url) {
-        window.open(url);
-    };
-
-    /**
      * Clears the cache for local storage
      * @param {Event} e
      */
@@ -101,6 +97,9 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
 
         chrome.storage.local.clear(function () {
             DEBUG && console.log('Cache Cleared');
+
+            _gaq.push(['_trackEvent', 'settings', 'cachedItems', 'clear']);
+            
             $scope.$apply(function () {
                 $scope.cacheClearedLabelShow = true;
                 init();

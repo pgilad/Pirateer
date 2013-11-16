@@ -27,7 +27,8 @@ module.exports = function (grunt) {
                     dead_code  : true
                 }
             },
-            build  : {
+
+            build: {
                 files: [
                     {
                         '<%= config.dist %>/js/common.min.js'     : [

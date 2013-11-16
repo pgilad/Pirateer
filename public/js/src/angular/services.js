@@ -229,7 +229,7 @@ angular.module('app').service('searchService', [
 
         var setCacheOptionsVar = function (value) {
             _gaq.push(['_setCustomVar', 5, 'cacheOptions', value.toString(), 1],
-                ['_trackEvent', 'settingsChange', 'cacheOptions', value.toString()]
+                ['_trackEvent', 'settings', 'cacheOptions', value.toString()]
             );
         };
 
@@ -254,7 +254,7 @@ angular.module('app').service('searchService', [
                 cacheOptions.cacheNames = cacheOptions.cacheRatings = false;
             }
 
-            DEBUG && console.log('sending GA event for settingsChange');
+            DEBUG && console.log('sending GA event for settings');
             setCacheOptionsVar(value);
 
             set(options, 'sync');

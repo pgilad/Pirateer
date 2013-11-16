@@ -2,11 +2,10 @@
  * Created by GiladP on 16/11/13.
  */
 
-
 angular.module('app').directive('ptOptionsPanel', function () {
 
     return {
-        replace   : false,
+        replace   : true,
         scope     : {
             panelTitleText: '@'
         },
