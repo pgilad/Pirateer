@@ -1,0 +1,192 @@
+body, button, td {
+    font-family: 'Noto Sans', 'Segoe UI', 'Lucida Grande', 'Open Sans', arial, sans-serif;
+    font-size: 12px;
+    color: rgb(48, 57, 66);
+    background-color: white;
+    margin-left: 155px;
+    margin-right: 0;
+    overflow-x: hidden;
+}
+
+.animate-show {
+    transition: 300ms linear all;
+    display: block;
+    position: relative;
+}
+
+.animate-show.animate-show-active, .animate-hide {
+    opacity: 1;
+}
+
+.animate-hide.animate-hide-active, .animate-show {
+    opacity: 0;
+}
+
+.cache-options {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.cache-options-ul {
+    text-align: left;
+    font-size: 12px;
+    margin-top:10px;
+    padding-left:25px;
+}
+
+.cache-options-container {
+    border-radius: 10px;
+    padding: 1px 7px 1px 7px;
+    -webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -ms-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.cache-options-actions {
+    text-align: left;
+    cursor: pointer;
+    margin-left: 22px;
+}
+
+button {
+    outline: 0 !important;
+}
+
+body {
+    background-color: white;
+    font-size: 12px;
+    margin-left: 155px;
+    margin-right: 0;
+    overflow-x: hidden;
+}
+
+h1 {
+    font-weight: 400;
+    font-size: 18px;
+    display: inline;
+    line-height: 18px;
+    vertical-align: middle;
+}
+
+.top-title {
+    padding-left: 4px;
+}
+
+#pirateer-icon {
+    width: 36px;
+    height: 36px;
+    line-height: 18px;
+    vertical-align: middle;
+}
+
+header {
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 8px;
+    min-width: 600px;
+}
+
+section {
+    -webkit-padding-start: 18px;
+    margin-bottom: 24px;
+    margin-top: 8px;
+    max-width: 600px;
+}
+
+section h3 {
+    -webkit-margin-start: -18px;
+    color: black;
+    line-height: 14px;
+    font-size: 14px;
+    font-weight: normal;
+    margin-bottom: 11px;
+}
+
+.device-icon {
+    padding-top: 11px;
+    padding-right: 3px;
+}
+
+p {
+    line-height: 1.4em;
+    font-weight: 400;
+}
+
+label {
+    display: block;
+}
+
+label:hover {
+    color: black;
+}
+
+label[for] {
+    display: inline;
+}
+
+button {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.options-sections {
+    margin-top: 66px;
+}
+
+.options-sections section {
+    margin-top: 8px;
+    margin-bottom: 24px;
+    max-width: 600px;
+}
+
+.hidden {
+    visibility: collapse
+}
+
+.ng-invalid {
+    background-color: #f77;
+}
+
+.savedMessage {
+    display: inline;
+}
+
+a {
+    text-decoration: none;
+}
+
+.fixed-top {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    top: 0;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid rgb(181, 199, 222);
+    background-color: white;
+    width: 100%;
+    padding: 15px 15px 25px;
+}
+
+.scrolling-disabled {
+    overflow: hidden;
+}
+
+.custom-domain {
+    padding-left: 15px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+}
+
+input[type="radio"]:disabled + label {
+    color: #ccc;
+}

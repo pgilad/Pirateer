@@ -2,42 +2,17 @@
  * app.js */
 _gaq.push(['_trackPageview']);
 
-(function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+(function () {
+    var po = document.createElement('script');
+    po.type = 'text/javascript';
+    po.async = true;
     po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(po, s);
 })();
 
-app.controller('MainCtrl', [
-    '$scope', '$timeout', 'ptStorageService', function ($scope, $timeout, ptStorageService) {
-
-        $scope.selectedCaching = {};
-
-        /**
-         * CachingOptions
-         * @type {Array}
-         */
-        $scope.cachingOptions = [
-            { displayName : 'Comprehensive', value: 0, speedLabel: 'label label-warning',
-                properties: [
-                    'Searches names from scratch',
-                    'Gets the most updated ratings',
-                    'Slowest'
-                ]},
-            { displayName : 'Name Cache', value: 1, speedLabel: 'label label-success',
-                properties: [
-                    'Uses cached movie names to speed search (Recommended)',
-                    'Gets the most updated ratings',
-                    'Fast'
-                ]},
-            { displayName : 'Name & Ratings Cache', value: 2, speedLabel: 'label label-info',
-                properties: [
-                    'Caches names & ratings to speed search',
-                    'Rating might not be up to date',
-                    'Blazing Fast'
-                ]
-            }
-        ];
+angular.module('app').controller('MainCtrl', [
+    '$scope', '$timeout', function ($scope, $timeout) {
 
         /**
          *
@@ -86,15 +61,6 @@ app.controller('MainCtrl', [
         };
 
         /**
-         * Get the cache options from storage space (sync)
-         */
-        ptStorageService.getCacheOptionsFromStorage(function () {
-            $scope.$apply(function () {
-                $scope.selectedCaching.value = ptStorageService.getCacheOptionsAsValue();
-            });
-        });
-
-        /**
          * Open a new window
          * @param {string} url
          */
@@ -102,33 +68,6 @@ app.controller('MainCtrl', [
             window.open(url);
         };
 
-        /**
-         * Clears the cache for local storage
-         * @param {Event} e
-         */
-        $scope.clearCache = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            chrome.storage.local.clear(function () {
-                DEBUG && console.log('Cache Cleared');
-                $scope.$apply(function () {
-                    $scope.cacheClearedLabelShow = true;
-                });
-
-                $timeout(function () {
-                    $scope.cacheClearedLabelShow = false;
-                }, 1000);
-            });
-        };
-
-        /**
-         * Set the value of cacheOptions in storage according to value passed in
-         * @param {number} value
-         */
-        $scope.onChangeSelectedCaching = function (value) {
-            ptStorageService.setCacheOptionsByValue(value);
-        };
         /**
          * searchIMDBFromPopup - searches for a searchTerm in the piratebay
          * @param {String} searchTerm

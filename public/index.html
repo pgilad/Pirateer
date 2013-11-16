@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="css/style.css"/>
     <!-- endbuild -->
 
-    <!-- build:js js/includes.min.js -->
     <script type="text/javascript" src="js/vendor/angular.min.js"></script>
     <script type="text/javascript" src="js/vendor/lodash.min.js"></script>
-    <script type="text/javascript" src="js/src/common/init.js"></script>
-    <script type="text/javascript" src="js/src/angular/services.js"></script>
+
+    <!-- build:js js/common.min.js -->
+    <script type="text/javascript" src="js/src/init.js"></script>
     <!-- endbuild -->
 
     <!-- build:js js/app.min.js -->
@@ -33,32 +33,6 @@
             </div>
             <button type="submit" class="btn btn-default btn-sm">Search</button>
         </form>
-
-    </div>
-    <div class="cacheOptions">
-        <h4>
-            Search Method:
-        </h4>
-
-        <div class="btn-group" style="font-size:12px;">
-            <label ng-repeat="option in cachingOptions" class="btn cache-options-container"
-                   ng-class="{'btn-info': selectedCaching.value == $index}">
-                <input type="radio" ng-change="onChangeSelectedCaching(selectedCaching.value)"
-                       value="{{ option.value }}" name="cachingOptionsRadio" ng-model="selectedCaching.value">
-                {{ option.displayName }}
-            </label>
-        </div>
-
-        <ul class="cache-options-ul">
-            <li ng-repeat="line in cachingOptions[selectedCaching.value].properties">
-                <span ng-class="$last && cachingOptions[selectedCaching.value].speedLabel">{{ line }}</span>
-            </li>
-        </ul>
-
-        <div class="cache-options-actions">
-            <a ng-click="clearCache($event)">Clear cache... </a> &nbsp; &nbsp;
-            <span class="badge badge-warning" ng-show="cacheClearedLabelShow">Cache cleared</span>
-        </div>
 
     </div>
 

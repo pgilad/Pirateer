@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html ng-csp ng-app="app">
+<head>
+    <title>Pirateer extension options</title>
+
+    <!-- build:css css/options_style.min.css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/options.css"/>
+    <!-- endbuild -->
+
+    <script type="text/javascript" src="js/vendor/angular.min.js"></script>
+    <script type="text/javascript" src="js/vendor/lodash.min.js"></script>
+
+    <!-- build:js js/common.min.js -->
+    <script type="text/javascript" src="js/src/init.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js js/app_options.min.js -->
+    <script type="text/javascript" src="js/src/angular/services.js"></script>
+    <script type="text/javascript" src="js/src/angular/panel_directive.js"></script>
+    <script type="text/javascript" src="js/src/angular/OptionsCtrl.js"></script>
+    <!-- endbuild -->
+
+</head>
+<body ng-controller="OptionsCtrl">
+
+<div class="fixed-top">
+    <header>
+        <img id="pirateer-icon" src="img/icon_48x48.png" alt="Pirateer Icon"/>
+
+        <h1 class="top-title">
+            Pirateer extension options
+        </h1>
+    </header>
+
+</div>
+
+<div class="options-sections">
+
+    <div class="row-fluid">
+        <div class="col-md-6">
+
+            <pt-options-panel panel-title-text="Search Method">
+                <div class="btn-group" style="font-size:12px;">
+                    <label ng-repeat="option in cachingOptions" class="btn cache-options-container"
+                           ng-class="{'btn-info': selectedCaching.value == $index}">
+                        <input type="radio" ng-change="onChangeSelectedCaching(selectedCaching.value)"
+                               value="{{ option.value }}" name="cachingOptionsRadio"
+                               ng-model="selectedCaching.value">
+                        {{ option.displayName }}
+                    </label>
+                </div>
+
+                <ul class="cache-options-ul">
+                    <li ng-repeat="line in cachingOptions[selectedCaching.value].properties">
+                        <span ng-class="$last && cachingOptions[selectedCaching.value].speedLabel">{{ line }}</span>
+                    </li>
+                </ul>
+            </pt-options-panel>
+
+            <pt-options-panel panel-title-text="Rotten Tomatoes Ratings (Coming Soon)">
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                        Active
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                        Not Active
+                    </label>
+                </div>
+            </pt-options-panel>
+
+            <pt-options-panel panel-title-text="Stats">
+
+                Cached Items: {{ cachedItems.itemsLength }}
+                <br/>
+                Cache Size: {{ cachedItems.size }}
+                <br/><br/>
+
+                <div class="btn-group">
+                    <button class="btn btn-xs btn-default" ng-class="{active:showCachedItems}"
+                            ng-click="toggleCachedItemsDisplay()">
+                        See locally stored movies
+                    </button>
+
+                    <button class="btn btn-warning btn-xs" ng-click="clearCache($event)">Clear cache...</button>
+                    &nbsp; &nbsp;
+                    <span class="badge badge-warning" ng-show="cacheClearedLabelShow">Cache cleared</span>
+                </div>
+            </pt-options-panel>
+
+            <pt-options-panel panel-title-text="Feedback">
+
+                Found a bug? Have a question? A new feature you'd like to see?
+                <br/>Send us an email to:
+                <a target="_blank"
+                   href="mailto:pirateerimdb@gmail.com">pirateerimdb@gmail.com</a>
+                <br/><br/>
+                Give us a review through the Chrome Web Store:
+                <a target="_blank"
+                   href="https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd/reviews">Review</a>
+            </pt-options-panel>
+
+        </div>
+
+        <div class="col-md-6">
+            <div ng-show="showCachedItems" class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Cached Items ({{ cachedItems.itemsLength }})</h3>
+                </div>
+                <div class="panel-body">
+
+                    <ul>
+                        <li ng-repeat="cached in cachedItems.items"> {{ cached.title }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div ng-show="!showCachedItems">
+                <div class="text-center"><img src="img/pirateer_logo.png"
+                                              alt="Pirateer IMDB - Your source for the Pirate Bay ratings"/>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

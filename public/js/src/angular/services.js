@@ -1,6 +1,7 @@
 /*!
  * services.js */
-app.service('searchService', [
+
+angular.module('app').service('searchService', [
         '$http', '$q', 'ptStorageService', 'ptSearchHelpers', function ($http, $q, ptStorageService, ptSearchHelpers) {
 
             var helpers = ptSearchHelpers;

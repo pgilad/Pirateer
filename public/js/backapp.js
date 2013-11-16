@@ -2,7 +2,7 @@
 
 /*!
  * backapp.js */
-app.run([
+angular.module('app').run([
     'searchService', '$rootScope', 'ptStorageService', function (searchService, $rootScope, ptStorageService) {
 
         var shouldQuery = false;
