@@ -1,6 +1,11 @@
 /*!
 * Main Style Sheet
  */
+
+html {
+    background: transparent;
+}
+
 body {
     width: 500px;
     background: transparent;
@@ -8,7 +13,17 @@ body {
     font-size: 12px;
 }
 
-.cacheOptions-actions {
+.cache-options-container {
+    border-radius: 10px;
+    padding: 1px 7px 1px 7px;
+    -webkit-transition: all 200ms linear;
+    -moz-transition: all 200ms linear;
+    -ms-transition: all 200ms linear;
+    -o-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+.cache-options-actions {
     text-align: left;
     cursor: pointer;
     margin-left: 22px;
@@ -47,7 +62,7 @@ body {
     font-size: 12px;
 }
 
-.cacheOptions-ul {
+.cache-options-ul {
     text-align: left;
     font-size: 12px;
 }
@@ -94,8 +109,4 @@ body {
     vertical-align: top;
     border-top: 1px solid #dddddd;
     background-color: #f9f9f9;
-}
-
-html {
-    background: transparent;
 }

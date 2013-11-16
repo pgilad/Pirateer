@@ -41,7 +41,7 @@
         </h4>
 
         <div class="btn-group" style="font-size:12px;">
-            <label ng-repeat="option in cachingOptions" class="btn" style="border-radius:10px"
+            <label ng-repeat="option in cachingOptions" class="btn cache-options-container"
                    ng-class="{'btn-info': selectedCaching.value == $index}">
                 <input type="radio" ng-change="onChangeSelectedCaching(selectedCaching.value)"
                        value="{{ option.value }}" name="cachingOptionsRadio" ng-model="selectedCaching.value">
@@ -49,13 +49,13 @@
             </label>
         </div>
 
-        <ul class="cacheOptions-ul">
+        <ul class="cache-options-ul">
             <li ng-repeat="line in cachingOptions[selectedCaching.value].properties">
                 <span ng-class="$last && cachingOptions[selectedCaching.value].speedLabel">{{ line }}</span>
             </li>
         </ul>
 
-        <div class="cacheOptions-actions">
+        <div class="cache-options-actions">
             <a ng-click="clearCache($event)">Clear cache... </a> &nbsp; &nbsp;
             <span class="badge badge-warning" ng-show="cacheClearedLabelShow">Cache cleared</span>
         </div>
