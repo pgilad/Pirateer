@@ -1,6 +1,6 @@
 {
     "name": "Pirateer",
-    "version": "0.4.50",
+    "version": "0.4.51",
     "manifest_version": 2,
     "author": "Gilad Peleg",
     "description": "Pirateer is a Chrome Extension that adds IMDb ratings to TV shows and movies on The Pirate Bay",
