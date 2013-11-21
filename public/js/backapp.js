@@ -99,6 +99,12 @@ angular.module('app').run([
             }
         }
 
+        var showPageAction = function (port) {
+            if (port.sender && port.sender.tab && port.sender.tab.id) {
+                chrome.pageAction.show(port.sender.tab.id);
+            }
+        };
+
         chrome.runtime.onConnect.addListener(function (port) {
 
                 port.onDisconnect.addListener(function () {
@@ -111,9 +117,10 @@ angular.module('app').run([
 
                     port.onMessage.addListener(function (msg) {
                             if (msg.type === 'list') {
-
                                 _gaq.push(['_trackPageview', decodeURI(port.sender.url)]);
                                 _gaq.push(['_trackEvent', 'Search', 'fromPirateBay', decodeURI(port.sender.url)]);
+
+                                showPageAction(port);
 
                                 ptStorageService.getIfUserClickedSupport(function (response) {
                                     DEBUG && console.debug('Checked if user has clicked support and got', response.supportLinkClick);
@@ -152,6 +159,7 @@ angular.module('app').run([
                 }
                 else if (port.name === 'imdbReport') {
                     port.onMessage.addListener(function (msg) {
+
                         if (msg.type === 'track') {
                             DEBUG && console.log('Got IMDB site track');
                             _gaq.push(['_trackPageview', msg.href]);
@@ -160,7 +168,13 @@ angular.module('app').run([
                             DEBUG && console.log('User clicked on Search Pirate Bay from IMDB link', msg.item.url);
                             _gaq.push(['_trackEvent', 'Search', 'fromIMDB', msg.item.url || msg.item.title]);
                         }
+
+                        showPageAction(port);
                     });
+                }
+                //TODO
+                else if (port.name === 'optionPage') {
+
                 }
             }
         );
@@ -171,7 +185,23 @@ angular.module('app').run([
             if (details.reason === 'chrome_update') {
                 return;
             }
+
             _gaq.push(['_trackEvent', 'App_Load', details.reason, currentVersion]);
+            if (details.reason === 'install') {
+                //take user to options page
+                chrome.tabs.create({url: 'options.html?origin=welcome'});
+            }
         });
+
+        //TODO think about implementing a better usage
+        chrome.runtime.onUpdateAvailable.addListener(function (details) {
+
+        });
+
+        chrome.pageAction.onClicked.addListener(function (tab) {
+            DEBUG && console.log('User clicked on page action icon', tab);
+            _gaq.push(['_trackEvent', 'Options', 'iconClick', tab.url]);
+            chrome.tabs.create({url: 'options.html'});
+        })
     }
 ]);

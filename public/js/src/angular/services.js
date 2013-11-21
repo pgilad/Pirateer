@@ -313,7 +313,7 @@ angular.module('app').service('searchService', [
         };
 
         var get = function (keys, storageType, callback) {
-            if (!angular.isFunction(callback)) callback = angular.noop();
+            if (!angular.isFunction(callback)) callback = angular.noop;
             if (!keys || !keys.length) return callback();
             storageType = storageType || 'local';
             return getStorageSystem(storageType).get(keys, callback);
@@ -327,7 +327,7 @@ angular.module('app').service('searchService', [
          * @returns {*}
          */
         var set = function (saveObj, storageType, callback) {
-            if (!angular.isFunction(callback)) callback = angular.noop();
+            if (!angular.isFunction(callback)) callback = angular.noop;
             if (!saveObj) return callback();
 
             storageType = storageType || 'local';

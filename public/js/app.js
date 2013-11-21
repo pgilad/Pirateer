@@ -15,7 +15,7 @@ angular.module('app').controller('MainCtrl', [
     '$scope', '$timeout', function ($scope, $timeout) {
 
         $scope.openOptionsPage = function () {
-            chrome.tabs.create({url: 'options.html'});
+            chrome.tabs.create({url: 'options.html?origin=popup'});
         };
 
         /**

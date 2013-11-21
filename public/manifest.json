@@ -1,59 +1,60 @@
 {
-    "name": "Pirateer",
-    "version": "0.4.51",
-    "manifest_version": 2,
-    "author": "Gilad Peleg",
-    "description": "Pirateer is a Chrome Extension that adds IMDb ratings to TV shows and movies on The Pirate Bay",
-    "icons": {
-        "16": "img/icon_16x16.png",
-        "48": "img/icon_48x48.png",
+    "name"                    : "Pirateer",
+    "version"                 : "0.5.1",
+    "manifest_version"        : 2,
+    "author"                  : "Gilad Peleg",
+    "description"             : "Pirateer is a Chrome Extension that adds IMDb ratings to TV shows and movies on The Pirate Bay",
+    "icons"                   : {
+        "16" : "img/icon_16x16.png",
+        "48" : "img/icon_48x48.png",
         "128": "img/icon_128x128.png"
     },
-    "permissions": [
+    "permissions"             : [
         "http://www.imdb.com/*",
         "http://p.media-imdb.com/static*",
         "storage"
     ],
-    "background": {
-        "page": "background.html",
+    "background"              : {
+        "page"      : "background.html",
         "persistent": false
     },
-    "content_scripts": [
+    "content_scripts"         : [
         {
-            "matches": [
+            "matches"        : [
                 "http://thepiratebay.sx/*",
                 "http://www.imdb.com/title/tt*"
             ],
             "exclude_matches": [
                 "http://thepiratebay.sx/",
                 "http://thepiratebay.sx/top",
-                "http://thepiratebay.sx/browse"
+                "http://thepiratebay.sx/browse",
+                "http://thepiratebay.sx/browse/401*",
+                "http://thepiratebay.sx/browse/301*"
             ],
-            "js": [
+            "js"             : [
                 "js/vendor/jquery-2.0.3.min.js",
                 "js/vendor/jquery.contextMenu.js",
                 "js/vendor/jquery.ui.position.js",
                 "js/content-helpers.js",
                 "js/content.js"
             ],
-            "css": [
+            "css"            : [
                 "css/vendor/jquery.contextMenu.css"
             ],
-            "run_at": "document_end"
+            "run_at"         : "document_end"
         }
     ],
     "web_accessible_resources": [
         "js/vendor/jquery-2.0.3.min.map",
         "img/icon_19x19.png"
     ],
-    "options_page": "options.html",
-    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://apis.google.com; object-src 'self'",
-    "browser_action": {
-        "default_icon": {
+    "options_page"            : "options.html",
+    "content_security_policy" : "script-src 'self' https://ssl.google-analytics.com https://apis.google.com; object-src 'self'",
+    "page_action"             : {
+        "default_icon" : {
             "19": "img/icon_19x19.png",
             "38": "img/icon_38x38.png"
         },
-        "default_title": "Pirateer",
-        "default_popup": "index.html"
+        "default_title": "Pirateer Movie Ratings"
     }
 }

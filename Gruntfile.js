@@ -31,22 +31,18 @@ module.exports = function (grunt) {
             build: {
                 files: [
                     {
-                        '<%= config.dist %>/js/common.min.js'     : [
-                            '<%= config.src %>/js/src/init.js'
-                        ],
-                        '<%= config.dist %>/js/app.min.js'        : [
-                            '<%= config.src %>/js/app.js'
-                        ],
-                        '<%= config.dist %>/js/backapp.min.js'    : [
+                        '<%= config.dist %>/js/background.min.js': [
+                            '<%= config.src %>/js/src/init.js',
                             '<%= config.src %>/js/src/angular/services.js',
                             '<%= config.src %>/js/backapp.js'
                         ],
-                        '<%= config.dist %>/js/app_options.min.js': [
+                        '<%= config.dist %>/js/options.min.js'   : [
+                            '<%= config.src %>/js/src/init.js',
                             '<%= config.src %>/js/src/angular/services.js',
                             '<%= config.src %>/js/src/angular/panel_directive.js',
                             '<%= config.src %>/js/src/angular/OptionsCtrl.js'
                         ],
-                        '<%= config.dist %>/js/content_script.js' : [
+                        '<%= config.dist %>/js/content_script.js': [
                             '<%= config.src %>/js/vendor/jquery-2.0.3.min.js',
                             '<%= config.src %>/js/vendor/jquery.contextMenu.js',
                             '<%= config.src %>/js/vendor/jquery.ui.position.js',
@@ -74,7 +70,10 @@ module.exports = function (grunt) {
         },
 
         useminPrepare: {
-            html: ['<%= config.src %>/index.html', '<%= config.src %>/background.html']
+            html   : ['<%= config.src %>/options.html', '<%= config.src %>/background.html'],
+            options: {
+                dest: '<%= config.dist %>'
+            }
         },
 
         usemin: {
@@ -92,9 +91,6 @@ module.exports = function (grunt) {
                     banner: '/* CSS minified file */'
                 },
                 files  : {
-                    '<%= config.dist %>/css/style.min.css'        : [
-                        '<%= config.src %>/bower_components/bootstrap/dist/css/bootstrap.min.css', '<%= config.src %>/css/style.css'
-                    ],
                     '<%= config.dist %>/css/options_style.min.css': [
                         '<%= config.src %>/bower_components/bootstrap/dist/css/bootstrap.min.css', '<%= config.src %>/css/options.css'
                     ],
@@ -131,13 +127,19 @@ module.exports = function (grunt) {
                         src   : [
                             'img/**/*',
                             '*.html',
-                            'js/vendor/jquery-2.0.3.min.map',
-                            'js/vendor/angular.min.js',
-                            'js/vendor/lodash.min.js'
+                            '!index.html',
+                            'js/vendor/jquery-2.0.3.min.map'
                         ],
                         dest  : '<%= config.dist %>/'
                     }
                 ]
+            }
+        },
+
+        concat: {
+            build: {
+                src : ['<%= config.src %>/bower_components/lodash/dist/lodash.min.js', '<%= config.src %>/js/vendor/angular.min.js'],
+                dest: '<%= config.dist %>/js/vendors.min.js'
             }
         },
 
@@ -174,6 +176,7 @@ module.exports = function (grunt) {
         'useminPrepare',
         'cssmin:build',
         'copy:build',
+        'concat:build',
         'uglify:build',
         'buildManifest',
         'usemin',

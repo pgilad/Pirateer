@@ -1,22 +1,22 @@
 {
-    "name"   : "pirateer",
-    "version": "0.1.0",
-
-    "authors"     : [
-        "Gilad Peleg <giladp007@gmail.com>"
-    ],
-    "directory"   : "public/bower_components",
-    "description" : "imdb rater",
-    "license"     : "MIT",
-    "private"     : true,
-    "ignore"      : [
-        "**/.*",
-        "node_modules",
-        "bower_components",
-        "test",
-        "tests"
-    ],
-    "dependencies": {
-        "bootstrap": "~3.0.2"
-    }
+  "name": "pirateer",
+  "version": "0.1.0",
+  "authors": [
+    "Gilad Peleg <giladp007@gmail.com>"
+  ],
+  "directory": "public/bower_components",
+  "description": "imdb rater",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.2",
+    "lodash": "~2.3.0"
+  }
 }
