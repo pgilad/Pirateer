@@ -42,7 +42,10 @@ angular.module('app').run([
                 }
 
                 if (movieType === 'tvShow') {
-                    title = title.split(/Season/gi)[0].split(/S(\d{2})E(\d{2})/gi)[0];
+                    title = title.split(/Season/gi)[0]
+                        .split(/S(\d{2})E(\d{2})/gi)[0]
+                        .split(/S(\d{2})/gi)[0]
+                        .split(/\dx\d{2}/)[0];
                 }
 
                 //if movie not found

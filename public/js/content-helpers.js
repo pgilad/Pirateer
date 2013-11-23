@@ -8,6 +8,19 @@
     window.Pirateer.helpers = window.Pirateer.helpers || {};
     var helpers = window.Pirateer.helpers;
 
+    var firstLineCategories = {
+        200: 'videos'
+    };
+    var secondLineCategories = {
+        201: {name: 'movies', type: 'Movie'},
+        202: {name: 'dvdr movies', type: 'Movie'},
+        205: {name: 'tv shows', type: 'tvShow'},
+        206: {name: 'palm movies', type: 'Movie'},
+        207: {name: 'hd movies', type: 'Movie'},
+        208: {name: 'hd shows', type: 'tvShow'},
+        209: {name: '3d', type: 'Movie'}
+    };
+
     helpers.helperFunctions = {
         /**
          * Apply a header to IMDB
@@ -32,12 +45,23 @@
          * @returns {string|Null}
          */
         isVideo: function isVideo(categoryFirstLine, categorySecondLine) {
-            if (categoryFirstLine === 'Video') {
-                if (categorySecondLine.match(/TV shows/gi)) {
-                    return 'tvShow';
+
+            if (!categoryFirstLine || !categorySecondLine) {
+                return null;
+            }
+
+            var firstLineCode = categoryFirstLine.match(/(\d){3}/g)[0];
+
+            //if is in known video codes
+            if (firstLineCategories[firstLineCode]) {
+                //get video type
+                var secondLineCode = categorySecondLine.match(/(\d){3}/g)[0];
+                //if it's a known video type
+                if (secondLineCategories[secondLineCode]) {
+                    return secondLineCategories[secondLineCode].type;
                 }
-                else if (categorySecondLine.match(/Movie/gi)) {
-                    return 'Movie';
+                else {
+                    return null;
                 }
             }
 
@@ -70,12 +94,12 @@
             for (var i = 0; allTrList, i < allTrList.length; ++i) {
                 $currentTr = $(allTrList[i]);
                 $category = $currentTr.find('.vertTh a');
-                var categoryFirstLine = $category.eq(0).text();
-                var categorySecondLine = $category.eq(1).text();
+                var categoryFirstLine = $category.eq(0).attr('href');
+                var categorySecondLine = $category.eq(1).attr('href');
 
                 //if it's a movie then get it's name
 
-                var movieType = helpers.helperFunctions.isVideo(categoryFirstLine, categorySecondLine)
+                var movieType = helpers.helperFunctions.isVideo(categoryFirstLine, categorySecondLine);
                 if (movieType) {
                     movieObj = {
                         name     : $currentTr.find('div.detName')[0].innerText,

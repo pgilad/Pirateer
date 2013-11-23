@@ -96,11 +96,14 @@
 
                 <div class="btn-group">
                     <button class="btn btn-xs btn-default" ng-class="{active:showCachedItems}"
+                            style="border-radius:10px"
                             ng-click="toggleCachedItemsDisplay()">
                         See locally stored movies
                     </button>
 
-                    <button class="btn btn-warning btn-xs" ng-click="clearCache($event)">Clear cache...</button>
+                    <button class="btn btn-warning btn-xs" style="border-radius:10px" ng-click="clearCache($event)">
+                        Clear cache...
+                    </button>
                     &nbsp; &nbsp;
                     <span class="badge badge-warning" ng-show="cacheClearedLabelShow">Cache cleared</span>
                 </div>
