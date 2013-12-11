@@ -12,7 +12,7 @@
         var url = document.URL;
 
         //if it's pirate bay - run the pirate bay script
-        if (/thepiratebay\.sx/.test(url)) {
+        if (/thepiratebay/.test(url)) {
             helpers.pirateBayScript(url);
         }
         // if it's imdb - run the relevant script

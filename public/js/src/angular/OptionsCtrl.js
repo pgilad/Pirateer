@@ -153,7 +153,7 @@ angular.module('app').controller('OptionsCtrl',
              * @type {*}
              */
             var reportOverDonations = _.debounce(function () {
-                _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'mouseOver']);
+                _gaq.push(['_trackEvent', 'donations', 'mouseover', 'optionsPage']);
             }, 1000);
 
             var submitForm = function () {
@@ -184,7 +184,7 @@ angular.module('app').controller('OptionsCtrl',
                                 _gaq.push(['_set', 'hitCallback', null]);
                             }
                         ]);
-                        _gaq.push(['_trackEvent', 'Donations', 'fromPopup', 'submitForm']);
+                        _gaq.push(['_trackEvent', 'donations', 'buttonClick', 'optionsPage']);
                     } else {
                         submitForm();
                     }
@@ -206,7 +206,7 @@ angular.module('app').controller('OptionsCtrl',
             $scope.searchIMDBFromPopup = function (searchTerm) {
                 var hasOpened = false;
                 if (!searchTerm) return;
-                var targetUrl = 'http://thepiratebay.sx/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
+                var targetUrl = 'http://thepiratebay.ac/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
                 if (_gaq) {
                     _gaq.push([
                         '_set', 'hitCallback', function () {
@@ -215,7 +215,7 @@ angular.module('app').controller('OptionsCtrl',
                             _gaq.push(['_set', 'hitCallback', null]);
                         }
                     ]);
-                    _gaq.push(['_trackEvent', 'Search', 'fromPopup', searchTerm]);
+                    _gaq.push(['_trackEvent', 'Search', 'fromOptions', searchTerm]);
                 } else {
                     hasOpened = true;
                     openNewWindow(targetUrl);

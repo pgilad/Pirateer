@@ -1,6 +1,6 @@
 {
     "name": "Pirateer",
-    "version": "0.5.4",
+    "version": "0.5.6",
     "manifest_version": 2,
     "author": "Gilad Peleg",
     "description": "Pirateer is a Chrome Extension that adds IMDb ratings to TV shows and movies on The Pirate Bay",
@@ -21,17 +21,19 @@
     "content_scripts": [
         {
             "matches": [
-                "http://thepiratebay.sx/*",
+                "*://thepiratebay.ac/*",
+                "*://thepiratebay.sx/*",
                 "http://www.imdb.com/title/tt*"
             ],
-            "exclude_matches": [
-                "http://thepiratebay.sx/",
-                "http://thepiratebay.sx/top",
-                "http://thepiratebay.sx/top/401*",
-                "http://thepiratebay.sx/top/301*",
-                "http://thepiratebay.sx/browse",
-                "http://thepiratebay.sx/browse/401*",
-                "http://thepiratebay.sx/browse/301*"
+            "exclude_globs": [
+                "*://thepiratebay.*/",
+                "*://thepiratebay.*/top",
+                "*://thepiratebay.*/top/3??*",
+                "*://thepiratebay.*/top/4??*",
+                "*://thepiratebay.*/browse",
+                "*://thepiratebay.*/browse/4??*",
+                "*://thepiratebay.*/browse/3??*",
+                "*://thepiratebay.*/browse/1??*"
             ],
             "js": [
                 "js/vendor/jquery-2.0.3.min.js",

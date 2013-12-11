@@ -109,6 +109,7 @@
 
                     movieListByName.push(movieObj);
                 }
+
                 //build movieObj if it's a movie
                 rawMovieList.push($currentTr);
             }
@@ -120,6 +121,7 @@
          * @returns {jQuery}
          */
         getCompiledTdElement: function (msg) {
+
             //compile element
             return $('<a>' + msg.rating + '</a>')
                 .attr('title', msg.title + ' - IMDB' || null)
@@ -336,7 +338,7 @@
             var $pImg = helpers.helperFunctions.getSmallPirateerImage();
             var $pirateButton = $('<a></a>')
                 .attr('target', '_blank')
-                .attr('href', 'http://thepiratebay.sx/search/' + encodeURIComponent(movieTitle) + '/0/99/0')
+                .attr('href', 'http://thepiratebay.ac/search/' + encodeURIComponent(movieTitle) + '/0/99/0')
                 .addClass('btn2 large primary btn2_glyph_on btn2_text_on')
                 .css('font-size', '12px')
                 .attr('title', 'Search On Piratebay')
