@@ -12,14 +12,11 @@
         var url = document.URL;
 
         //if it's pirate bay - run the pirate bay script
-        if (/thepiratebay/.test(url)) {
-            helpers.pirateBayScript(url);
-        }
-        // if it's imdb - run the relevant script
-        //relevant link to track for now:
-        //http://www.imdb.com/title/tt2345567
-        else if (/imdb\.com\/title\/(tt\d+)/g.test(url)) {
+        if (/imdb\.com\/title\/(tt\d+)/g.test(url)) {
             helpers.imdbScript(url);
+        }
+        else {
+            helpers.pirateBayScript(url);
         }
     };
 

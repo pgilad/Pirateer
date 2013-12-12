@@ -18,7 +18,7 @@
     "grunt-bumpup": "~0.4.1",
     "grunt-usemin": "~2.0.2",
     "grunt-preprocess": "~3.0.0",
-    "matchdep": "~0.1.2",
+    "matchdep": "~0.3.0",
     "grunt-contrib-compress": "~0.5.2"
   },
   "author": "Gilad Peleg <giladp007@gmail.com>"
