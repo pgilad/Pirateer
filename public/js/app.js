@@ -77,7 +77,7 @@ angular.module('app').controller('MainCtrl', [
          */
         $scope.searchIMDBFromPopup = function (searchTerm) {
             if (!searchTerm) return;
-            var targetUrl = 'http://thepiratebay.ac/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
+            var targetUrl = 'http://thepiratebay.pe/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
             if (_gaq) {
                 _gaq.push([
                     '_set', 'hitCallback', function () {
