@@ -1,6 +1,6 @@
 /*!
  * content-helpers.js */
-(function (window) {
+(function(window) {
 
     //define helpers object
     /** @namespace */
@@ -12,13 +12,34 @@
         200: 'videos'
     };
     var secondLineCategories = {
-        201: {name: 'movies', type: 'Movie'},
-        202: {name: 'dvdr movies', type: 'Movie'},
-        205: {name: 'tv shows', type: 'tvShow'},
-        206: {name: 'palm movies', type: 'Movie'},
-        207: {name: 'hd movies', type: 'Movie'},
-        208: {name: 'hd shows', type: 'tvShow'},
-        209: {name: '3d', type: 'Movie'}
+        201: {
+            name: 'movies',
+            type: 'Movie'
+        },
+        202: {
+            name: 'dvdr movies',
+            type: 'Movie'
+        },
+        205: {
+            name: 'tv shows',
+            type: 'tvShow'
+        },
+        206: {
+            name: 'palm movies',
+            type: 'Movie'
+        },
+        207: {
+            name: 'hd movies',
+            type: 'Movie'
+        },
+        208: {
+            name: 'hd shows',
+            type: 'tvShow'
+        },
+        209: {
+            name: '3d',
+            type: 'Movie'
+        }
     };
 
     helpers.helperFunctions = {
@@ -59,8 +80,7 @@
                 //if it's a known video type
                 if (secondLineCategories[secondLineCode]) {
                     return secondLineCategories[secondLineCode].type;
-                }
-                else {
+                } else {
                     return null;
                 }
             }
@@ -71,10 +91,14 @@
         /**
          *
          */
-        reportNoMovies: function () {
+        reportNoMovies: function() {
             console.log('[Pirateer] - No Videos in current page');
-            helpers.port = chrome.runtime.connect({name: "getRating"});
-            helpers.port.postMessage({type: 'noVideo'});
+            helpers.port = chrome.runtime.connect({
+                name: "getRating"
+            });
+            helpers.port.postMessage({
+                type: 'noVideo'
+            });
         },
 
         /**
@@ -82,7 +106,7 @@
          * @param {Array} movieListByName
          * @param {Array} rawMovieList
          */
-        fillArraysWithMovies: function (movieListByName, rawMovieList) {
+        fillArraysWithMovies: function(movieListByName, rawMovieList) {
             var $category,
                 $currentTr,
                 movieObj;
@@ -102,9 +126,9 @@
                 var movieType = helpers.helperFunctions.isVideo(categoryFirstLine, categorySecondLine);
                 if (movieType) {
                     movieObj = {
-                        name     : $currentTr.find('div.detName')[0].innerText,
+                        name: $currentTr.find('div.detName')[0].innerText,
                         movieType: movieType,
-                        index    : i
+                        index: i
                     };
 
                     movieListByName.push(movieObj);
@@ -120,7 +144,7 @@
          * @param msg
          * @returns {jQuery}
          */
-        getCompiledTdElement: function (msg) {
+        getCompiledTdElement: function(msg) {
 
             //compile element
             return $('<a>' + msg.rating + '</a>')
@@ -142,7 +166,7 @@
          *
          * @returns {jQuery}
          */
-        getSmallPirateerImage: function () {
+        getSmallPirateerImage: function() {
             var imgUrl = chrome.extension.getURL('img/icon_19x19.png');
             return $('<img>')
                 .css('margin', 'auto')
@@ -153,7 +177,7 @@
         /**
          * Adds the support by reviewing link
          */
-        insertSupportLink: function () {
+        insertSupportLink: function() {
             //compile support element
 
             var $pImg = helpers.helperFunctions.getSmallPirateerImage().css('float', 'left').css('margin-right', '5px');
@@ -167,7 +191,7 @@
                 .css('float', 'right')
                 .css('border-bottom-style', 'none')
                 .css('cursor', 'pointer')
-                .on('click', function () {
+                .on('click', function() {
                     helpers.port.postMessage({
                         type: 'imdbSupportClick',
                         item: {
@@ -178,62 +202,73 @@
                 })
                 .insertBefore($('table#searchResult'))
                 .text('Support Pirateer by Rating Us on the Chrome Web Store')
-                .append($pImg)
+                .append($pImg);
         },
 
         /**
          * Adds context menu usage the the imdb links
          */
-        addContextMenu: function () {
+        addContextMenu: function() {
             //add context menu to links
             $.contextMenu({
                 selector: 'a.imdb-rating-link',
-                trigger : 'hover',
-                build   : function ($trigger, e) {
+                trigger: 'hover',
+                build: function($trigger, e) {
 
                     $trigger = $trigger[0];
 
                     var items = {
-                        "title"     : {name: $trigger.dataset.title},
-                        "year"      : {name: 'Year: ' + $trigger.dataset.year},
-                        "imdbRating": {name: 'IMDB Rating: ' + $trigger.dataset.rating}
+                        "title": {
+                            name: $trigger.dataset.title
+                        },
+                        "year": {
+                            name: 'Year: ' + $trigger.dataset.year
+                        },
+                        "imdbRating": {
+                            name: 'IMDB Rating: ' + $trigger.dataset.rating
+                        }
                     };
 
                     var ratingCount = $trigger.dataset.ratingCount;
 
                     if ($.isNumeric(ratingCount)) {
-                        items['ratingCount'] = {name: 'Rating Count: ' + ratingCount};
+                        items.ratingCount = {
+                            name: 'Rating Count: ' + ratingCount
+                        };
                     }
                     var topRank = $trigger.dataset.topRank;
                     if ($.isNumeric(topRank)) {
-                        items['topRank'] = {name: 'Highest Rank: ' + topRank};
+                        items.topRank = {
+                            name: 'Highest Rank: ' + topRank
+                        };
                     }
 
-                    items["sep1"] = "---------";
-                    items["imdbLink"] = {
-                        name    : 'See Movie On IMDB',
+                    items.sep1 = "---------";
+                    items.imdbLink = {
+                        name: 'See Movie On IMDB',
                         callback: function contextMenu_callback() {
                             helpers.port.postMessage({
                                 type: 'imdbLinkClick',
                                 item: {
                                     textToSearch: $trigger.dataset.textToSearch,
-                                    href        : $trigger.dataset.href
+                                    href: $trigger.dataset.href
                                 }
                             });
 
                             window.open($trigger.dataset.href);
 
-                        }};
+                        }
+                    };
 
                     /* NOT YET IMPLEMENTED
                      items["Amazon"] = {name: 'Buy on Amazon (Coming Soon)'};
                      */
 
                     return {
-                        delay   : 500,
+                        delay: 500,
                         autoHide: true,
-                        items   : items
-                    }
+                        items: items
+                    };
                 }
             });
         }
@@ -244,19 +279,21 @@
      * @param {Array} rawMovieList
      * @param {Boolean} showSupportLink
      */
-    helpers.handleFirstMovieFound = function (rawMovieList, showSupportLink) {
+    helpers.handleFirstMovieFound = function(rawMovieList, showSupportLink) {
         helpers.helperFunctions.applyHeader();
         helpers.helperFunctions.generateTds(rawMovieList);
 
         //short circuit insert support link
-        showSupportLink && helpers.helperFunctions.insertSupportLink();
+        if (showSupportLink) {
+            helpers.helperFunctions.insertSupportLink();
+        }
     };
 
     /**
      * @param movieListByName
      * @param rawMovieList
      */
-    helpers.handleEndResponse = function (movieListByName, rawMovieList) {
+    helpers.handleEndResponse = function(movieListByName, rawMovieList) {
         window.setTimeout(function window_setTimeout() {
             rawMovieList = movieListByName = [];
         }, 2000);
@@ -267,12 +304,17 @@
      * @param movieListByName
      * @param rawMovieList
      */
-    helpers.getRatingFromBackground = function (movieListByName, rawMovieList) {
+    helpers.getRatingFromBackground = function(movieListByName, rawMovieList) {
         var showSupportLink = true,
             movieFound = false;
 
-        helpers.port = chrome.runtime.connect({name: "getRating"});
-        helpers.port.postMessage({type: 'list', list: movieListByName});
+        helpers.port = chrome.runtime.connect({
+            name: "getRating"
+        });
+        helpers.port.postMessage({
+            type: 'list',
+            list: movieListByName
+        });
         helpers.helperFunctions.addContextMenu();
 
         helpers.port.onMessage.addListener(function port_onMessage_addListener(msg) {
@@ -308,8 +350,9 @@
      * Run the Pirate Bay Script
      * @param url
      */
-    helpers.pirateBayScript = function (url) {
-        var rawMovieList = [], movieListByName = [];
+    helpers.pirateBayScript = function(url) {
+        var rawMovieList = [],
+            movieListByName = [];
 
         helpers.helperFunctions.fillArraysWithMovies(movieListByName, rawMovieList);
 
@@ -329,8 +372,13 @@
      * @param url
      */
     helpers.imdbScript = function imdbScript(url) {
-        helpers.port = chrome.runtime.connect({name: "imdbReport"});
-        helpers.port.postMessage({type: 'track', href: url});
+        helpers.port = chrome.runtime.connect({
+            name: "imdbReport"
+        });
+        helpers.port.postMessage({
+            type: 'track',
+            href: url
+        });
 
         var insertElm = $('td#overview-bottom .wlb_classic_wrapper');
         if (insertElm && insertElm.length) {
@@ -338,18 +386,18 @@
             var $pImg = helpers.helperFunctions.getSmallPirateerImage();
             var $pirateButton = $('<a></a>')
                 .attr('target', '_blank')
-                .attr('href', 'http://thepiratebay.pe/search/' + encodeURIComponent(movieTitle) + '/0/99/0')
+                .attr('href', 'http://thepiratebay.se/search/' + encodeURIComponent(movieTitle) + '/0/99/0')
                 .addClass('btn2 large primary btn2_glyph_on btn2_text_on')
                 .css('font-size', '12px')
                 .attr('title', 'Search On Piratebay')
                 .attr('target', '_blank')
                 .append('<span class="btn2_text">Search In ThePirateBay</span>')
                 .append($pImg)
-                .on('click', function () {
+                .on('click', function() {
                     helpers.port.postMessage({
                         type: 'imdbSearchPirateBay',
                         item: {
-                            url      : document.URL,
+                            url: document.URL,
                             movieName: movieTitle
                         }
                     });
@@ -358,5 +406,4 @@
             insertElm.before($pirateButton);
         }
     };
-
 })(window);
