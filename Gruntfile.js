@@ -1,13 +1,12 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
 
     grunt.initConfig({
-        config  : {
-            src : 'public',
+        config: {
+            src: 'public',
             dist: 'build'
         },
-        pkg     : grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON('package.json'),
         manifest: grunt.file.readJSON('public/manifest.json'),
-
         banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
 
         bumpup: {
@@ -16,41 +15,39 @@ module.exports = function (grunt) {
             ]
         },
 
-        uglify  : {
+        uglify: {
             options: {
-                banner          : '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
+                banner: '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
                 preserveComments: 'some',
-                compress        : {
+                compress: {
                     global_defs: {
                         "DEBUG": false
                     },
-                    dead_code  : true
+                    dead_code: true
                 }
             },
 
             build: {
-                files: [
-                    {
-                        '<%= config.dist %>/js/background.min.js': [
-                            '<%= config.src %>/js/src/init.js',
-                            '<%= config.src %>/js/src/angular/services.js',
-                            '<%= config.src %>/js/backapp.js'
-                        ],
-                        '<%= config.dist %>/js/options.min.js'   : [
-                            '<%= config.src %>/js/src/init.js',
-                            '<%= config.src %>/js/src/angular/services.js',
-                            '<%= config.src %>/js/src/angular/panel_directive.js',
-                            '<%= config.src %>/js/src/angular/OptionsCtrl.js'
-                        ],
-                        '<%= config.dist %>/js/content_script.js': [
-                            '<%= config.src %>/js/vendor/jquery-2.0.3.min.js',
-                            '<%= config.src %>/js/vendor/jquery.contextMenu.js',
-                            '<%= config.src %>/js/vendor/jquery.ui.position.js',
-                            '<%= config.src %>/js/content-helpers.js',
-                            '<%= config.src %>/js/content.js'
-                        ]
-                    }
-                ]
+                files: [{
+                    '<%= config.dist %>/js/background.min.js': [
+                        '<%= config.src %>/js/src/init.js',
+                        '<%= config.src %>/js/src/angular/services.js',
+                        '<%= config.src %>/js/backapp.js'
+                    ],
+                    '<%= config.dist %>/js/options.min.js': [
+                        '<%= config.src %>/js/src/init.js',
+                        '<%= config.src %>/js/src/angular/services.js',
+                        '<%= config.src %>/js/src/angular/panel_directive.js',
+                        '<%= config.src %>/js/src/angular/OptionsCtrl.js'
+                    ],
+                    '<%= config.dist %>/js/content_script.js': [
+                        '<%= config.src %>/js/vendor/jquery-2.0.3.min.js',
+                        '<%= config.src %>/js/vendor/jquery.contextMenu.js',
+                        '<%= config.src %>/js/vendor/jquery.ui.position.js',
+                        '<%= config.src %>/js/content-helpers.js',
+                        '<%= config.src %>/js/content.js'
+                    ]
+                }]
             }
         },
 
@@ -59,28 +56,28 @@ module.exports = function (grunt) {
             build: {
                 options: {
                     archive: 'workspace/versions/pirateer <%= manifest.version %>.zip',
-                    mode   : 'zip',
-                    level  : 6
+                    mode: 'zip',
+                    level: 6
                 },
 
                 expand: true,
-                cwd   : '<%= config.dist %>/',
-                src   : ['**/*']
+                cwd: '<%= config.dist %>/',
+                src: ['**/*']
             }
         },
 
         useminPrepare: {
-            html   : ['<%= config.src %>/options.html', '<%= config.src %>/background.html'],
+            html: ['<%= config.src %>/options.html', '<%= config.src %>/background.html'],
             options: {
                 dest: '<%= config.dist %>'
             }
         },
 
         usemin: {
-            html   : ['<%= config.dist %>/**/*.html'],
-            css    : ['<%= config.dist %>/**/*.css'],
+            html: ['<%= config.dist %>/**/*.html'],
+            css: ['<%= config.dist %>/**/*.css'],
             options: {
-                dirs   : ['build'],
+                dirs: ['build'],
                 basedir: 'build'
             }
         },
@@ -90,7 +87,7 @@ module.exports = function (grunt) {
                 options: {
                     banner: '/* CSS minified file */'
                 },
-                files  : {
+                files: {
                     '<%= config.dist %>/css/options_style.min.css': [
                         '<%= config.src %>/bower_components/bootstrap/dist/css/bootstrap.min.css', '<%= config.src %>/css/options.css'
                     ],
@@ -104,41 +101,37 @@ module.exports = function (grunt) {
         htmlmin: {
             build: {
                 options: {
-                    removeComments    : true,
+                    removeComments: true,
                     collapseWhitespace: true
                 },
 
-                files: [
-                    {
-                        expand: true,     // Enable dynamic expansion.
-                        cwd   : '<%= config.dist %>/',      // Src matches are relative to this path.
-                        src   : ['*.html'] // Actual pattern(s) to match.
-                    }
-                ]
+                files: [{
+                    expand: true, // Enable dynamic expansion.
+                    cwd: '<%= config.dist %>/', // Src matches are relative to this path.
+                    src: ['*.html'] // Actual pattern(s) to match.
+                }]
             }
         },
 
         copy: {
             build: {
-                files: [
-                    {
-                        expand: true,
-                        cwd   : '<%= config.src %>/',
-                        src   : [
-                            'img/**/*',
-                            '*.html',
-                            '!index.html',
-                            'js/vendor/jquery-2.0.3.min.map'
-                        ],
-                        dest  : '<%= config.dist %>/'
-                    }
-                ]
+                files: [{
+                    expand: true,
+                    cwd: '<%= config.src %>/',
+                    src: [
+                        'img/**/*',
+                        '*.html',
+                        '!index.html',
+                        'js/vendor/jquery-2.0.3.min.map'
+                    ],
+                    dest: '<%= config.dist %>/'
+                }]
             }
         },
 
         concat: {
             build: {
-                src : ['<%= config.src %>/bower_components/lodash/dist/lodash.min.js', '<%= config.src %>/js/vendor/angular.min.js'],
+                src: ['<%= config.src %>/bower_components/lodash/dist/lodash.min.js', '<%= config.src %>/js/vendor/angular.min.js'],
                 dest: '<%= config.dist %>/js/vendors.min.js'
             }
         },
@@ -155,17 +148,17 @@ module.exports = function (grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-    grunt.registerTask('buildManifest', function () {
+    grunt.registerTask('buildManifest', function() {
 
         var manifestPath = {
-            input : './public/manifest.json',
+            input: './public/manifest.json',
             output: './build/manifest.json'
         };
 
         var tmpPkg = require(manifestPath.input);
 
-        tmpPkg["content_scripts"][0]["js"] = ['js/content_script.js'];
-        tmpPkg["content_scripts"][0]["css"] = ['css/content_style.min.css'];
+        tmpPkg.content_scripts[0].js = ['js/content_script.js'];
+        tmpPkg.content_scripts[0].css = ['css/content_style.min.css'];
 
         require('fs').writeFileSync(manifestPath.output, JSON.stringify(tmpPkg, null, 2));
     });
