@@ -9,8 +9,13 @@ module.exports = function(grunt) {
         manifest: grunt.file.readJSON('extension/manifest.json'),
         banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
         bumpup: {
+            options: {
+                normalize: true
+            },
             files: [
-                '<%= config.src %>/manifest.json'
+                '<%= config.src %>/manifest.json',
+                './bower.json',
+                './package.json'
             ]
         },
         uglify: {
