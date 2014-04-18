@@ -14,9 +14,10 @@ angular.module('app').run([
                 var _movieString = list[i].name;
                 var movieType = list[i].movieType;
 
+                //TODO extract to external lib
                 _movieString = _movieString
                 //convert dots, underscores, dashes, parenthesis and brackets to spaces
-                .replace(/[\.-_\(\)\[\]]+/g, ' ')
+                .replace(/[-_\.\(\)\[\]]+/g, ' ')
                 //convert double spaces to 1 space
                 .replace(/\s{2,}/g, ' ').trim();
 
@@ -43,12 +44,15 @@ angular.module('app').run([
                     title: title,
                     year: year
                 });
-                if (!_movie) movieArray.push({
-                    title: title,
-                    year: year,
-                    indexArr: [list[i].index]
-                });
-                else _movie.indexArr.push(list[i].index);
+                if (!_movie) {
+                    movieArray.push({
+                        title: title,
+                        year: year,
+                        indexArr: [list[i].index]
+                    });
+                } else {
+                    _movie.indexArr.push(list[i].index);
+                }
             }
         };
 
