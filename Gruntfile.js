@@ -168,7 +168,6 @@ module.exports = function(grunt) {
     });
     grunt.registerTask('build', [
         'clean:build',
-        'bumpup:patch',
         'cssmin:build',
         'copy:build',
         'concat:build',
