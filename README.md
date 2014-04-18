@@ -4,7 +4,7 @@
 
 Search for movies and TV Shows in The Pirate Bay and automatically see their IMDB ratings.
 
-![Screenshot of Pirateer](workspace/screen1.jpg)
+#### <img src="workspace/screen1.jpg" alt="Screenshot of Pirateer" width="256" height="256"/>
 
 *This extension is in no way affiliated with either The Pirate Bay or IMDB and provides the information as is.*
 
