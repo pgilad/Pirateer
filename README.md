@@ -18,8 +18,7 @@ Install from the [Chrome Webstore](https://chrome.google.com/webstore/detail/pir
 2. Run `npm install && bower install`.
 3. Run `grunt build` to build a running version into `build/`.
 4. Load the `build/` as an unpacked extension in `chrome://extensions`.
-
-Install from the [Chrome Webstore](https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd).
+5. Use extension.
 
 ## License
 
