@@ -7,7 +7,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;
 /** @global **/
 var _gaq = _gaq || [];
 
-(function() {
+(function(document) {
     var ga = document.createElement('script');
     ga.type = 'text/javascript';
     ga.async = true;
@@ -22,4 +22,4 @@ var _gaq = _gaq || [];
         DEBUG && console.log('Setting up online analytics ID of UA-43678943-3');
         _gaq.push(['_setAccount', 'UA-43678943-3']);
     }
-})();
+})(document);

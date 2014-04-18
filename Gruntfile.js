@@ -1,3 +1,4 @@
+'use strict';
 module.exports = function(grunt) {
     grunt.initConfig({
         config: {
@@ -59,18 +60,22 @@ module.exports = function(grunt) {
                 src: ['**/*']
             }
         },
-        useminPrepare: {
-            html: ['<%= config.src %>/{options,background}.html'],
-            options: {
-                dest: '<%= config.dist %>'
-            }
-        },
-        usemin: {
-            html: ['<%= config.dist %>/**/*.html'],
-            css: ['<%= config.dist %>/**/*.css'],
-            options: {
-                dirs: ['build'],
-                basedir: 'build'
+        injector: {
+            options: {},
+            deps: {
+                files: {
+                    //options html
+                    '<%= config.dist %>/options.html': [
+                        '<%= config.dist %>/css/options.min.css',
+                        '<%= config.dist %>/js/vendors.min.js',
+                        '<%= config.dist %>/js/options.min.js'
+                    ],
+                    //background html
+                    '<%= config.dist %>/background.html': [
+                        '<%= config.dist %>/js/vendors.min.js',
+                        '<%= config.dist %>/js/background.min.js'
+                    ]
+                }
             }
         },
         cssmin: {
@@ -79,10 +84,10 @@ module.exports = function(grunt) {
                     banner: '/* CSS minified file */'
                 },
                 files: {
-                    '<%= config.dist %>/css/options_style.min.css': [
+                    '<%= config.dist %>/css/options.min.css': [
                         '<%= config.src %>/bower_components/bootstrap/dist/css/bootstrap.min.css', '<%= config.src %>/css/options.css'
                     ],
-                    '<%= config.dist %>/css/content_style.min.css': [
+                    '<%= config.dist %>/css/content.min.css': [
                         '<%= config.src %>/css/vendor/jquery.contextMenu.css'
                     ]
                 }
@@ -150,19 +155,18 @@ module.exports = function(grunt) {
         };
         var tmpPkg = require(manifestPath.input);
         tmpPkg.content_scripts[0].js = ['js/content_script.js'];
-        tmpPkg.content_scripts[0].css = ['css/content_style.min.css'];
+        tmpPkg.content_scripts[0].css = ['css/content.min.css'];
         require('fs').writeFileSync(manifestPath.output, JSON.stringify(tmpPkg, null, 2));
     });
     grunt.registerTask('build', [
         'clean:build',
         'bumpup:patch',
-        'useminPrepare',
         'cssmin:build',
         'copy:build',
         'concat:build',
         'uglify:build',
         'buildManifest',
-        'usemin',
+        'injector',
         'compress:build'
     ]);
 };
