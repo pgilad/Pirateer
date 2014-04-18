@@ -14,8 +14,7 @@
         //if it's pirate bay - run the pirate bay script
         if (/imdb\.com\/title\/(tt\d+)/g.test(url)) {
             helpers.imdbScript(url);
-        }
-        else {
+        } else {
             helpers.pirateBayScript(url);
         }
     };

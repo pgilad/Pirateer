@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html ng-csp ng-app="app">
+
+<head>
+    <title>Pirateer extension options</title>
+
+    <!-- build:css css/options_style.min.css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/options.css" />
+    <!-- endbuild -->
+
+    <!-- build:js js/vendors.min.js -->
+    <script type="text/javascript" src="js/vendor/angular.min.js"></script>
+    <script type="text/javascript" src="bower_components/lodash/dist/lodash.min.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js js/options.min.js -->
+    <script type="text/javascript" src="js/src/init.js"></script>
+    <script type="text/javascript" src="js/src/angular/services.js"></script>
+    <script type="text/javascript" src="js/src/angular/panel_directive.js"></script>
+    <script type="text/javascript" src="js/src/angular/OptionsCtrl.js"></script>
+    <!-- endbuild -->
+
+</head>
+
+<body ng-controller="OptionsCtrl">
+
+    <div class="fixed-top">
+        <header>
+            <img id="pirateer-icon" src="img/icon_48x48.png" alt="Pirateer Icon" />
+
+            <h1 class="top-title">
+            Pirateer extension options
+        </h1>
+        </header>
+
+    </div>
+
+    <div class="options-sections">
+
+        <div class="row-fluid">
+            <div class="col-md-6">
+                <pt-options-panel ng-if="panels.showUserWelcome" panel-class="panel-info" panel-title-text="Welcome to Pirateer!">
+                    <blockquote>
+                        <p>
+                            I wish there was a way to see Movie ratings on The Piratebay..
+                        </p>
+                        <small>Now there is with Pirateer!</small>
+                    </blockquote>
+                    <p class="lead">Clean, easy, fast and simple to use.</p>
+
+                    Search for movies in Piratebay and see the results for yourself.
+
+                </pt-options-panel>
+
+                <pt-options-panel panel-title-text="General Settings">
+                    <h5 style="text-decoration: underline;"><strong>Caching method for movies & ratings:</strong></h5>
+
+                    <div class="btn-group" style="font-size:12px;">
+                        <label ng-repeat="option in cachingOptions" class="btn cache-options-container" ng-class="{'btn-info': selectedCaching.value == $index}">
+                            <input type="radio" ng-change="onChangeSelectedCaching(selectedCaching.value)" value="{{ option.value }}" name="cachingOptionsRadio" ng-model="selectedCaching.value">{{ option.displayName }}
+                        </label>
+                    </div>
+
+                    <ul class="cache-options-ul">
+                        <li ng-repeat="line in cachingOptions[selectedCaching.value].properties">
+                            <span ng-class="$last && cachingOptions[selectedCaching.value].speedLabel">{{ line }}</span>
+                        </li>
+                    </ul>
+
+                    <h5 style="text-decoration: underline;margin-top:20px; !important"><strong>Add Rotten Tomatoes Ratings
+                    (Coming Soon):</strong></h5>
+
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>Active
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">Not Active
+                        </label>
+                    </div>
+
+                    <h5 style="text-decoration: underline; margin-top:20px; !important"><strong>Cached Items:</strong></h5>
+                    Cached Items: {{ cachedItems.itemsLength }}
+                    <br/>Cache Size: {{ cachedItems.size }}
+                    <br/>
+                    <br/>
+
+                    <div class="btn-group">
+                        <button class="btn btn-xs btn-default" ng-class="{active:showCachedItems}" style="border-radius:10px" ng-click="toggleCachedItemsDisplay()">
+                            See locally stored movies
+                        </button>
+
+                        <button class="btn btn-warning btn-xs" style="border-radius:10px" ng-click="clearCache($event)">
+                            Clear cache...
+                        </button>
+                        &nbsp; &nbsp;
+                        <span class="badge badge-warning" ng-show="cacheClearedLabelShow">Cache cleared</span>
+                    </div>
+
+                </pt-options-panel>
+
+            </div>
+
+            <div class="col-md-6">
+                <pt-options-panel panel-title-text="Search The Piratebay.pe">
+
+                    <form class="form-inline" ng-submit="searchIMDBFromPopup(searchTerm)">
+                        <div class="col-xs-7 form-group">
+
+                            <input ng-model="searchTerm" type="text" autofocus placeholder="Enter search term..." class="form-control input-sm" />
+                        </div>
+                        <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default btn-sm">Search</button>
+                    </span>
+
+                    </form>
+                </pt-options-panel>
+
+                <pt-options-panel panel-title-text="Become a PATRON of Pirateer">
+                    <div class="support-separator-inner">
+                        <p class="support-text">
+                            Pay for Pirateer's development & server costs. Pirateer is <i>free</i> for use, but if you find Pirateer useful, and want to see it living, pay for our services.
+                        </p>
+
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="paypalForm" target="_blank">
+                            <input type="hidden" name="cmd" value="_s-xclick">
+                            <input type="hidden" name="hosted_button_id" value="NRTKGJHVR9PRS">
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" alt="PayPal - The safer, easier way to pay online!" ng-click="submitForm($event)">
+
+                            <img alt="paypal-pixel" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+                    </div>
+
+                    <div class="contact-separator">
+
+                        <p class="contact-text">
+                            Found a bug? Have a question? A new feature you'd like to see?
+                            <br/>Send us an email to:
+                            <a target="_blank" href="mailto:pirateerimdb@gmail.com">pirateerimdb@gmail.com</a>
+                            <br/>
+                            <br/>
+                            <strong>Give us a review through the Chrome Web Store:</strong>
+                            <a target="_blank" href="https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd/reviews">Review</a>
+                        </p>
+
+                        <div style="display:block">
+                            <strong>Recommend Pirateer to others!</strong>
+                        </div>
+
+                        <iframe allowtransparency="true" frameborder="0" scrolling="no" src="https://platform.twitter.com/widgets/tweet_button.1375828408.html#_=1376766487385&amp;count=horizontal&amp;id=twitter-widget-0&amp;lang=en&amp;size=m&amp;text=Pirateer%20roxx!!!&amp;via=pirateerIMDB"
+                        class="twitter-share-button twitter-count-horizontal" title="Twitter Tweet Button" data-twttr-rendered="true" style="width: 109px; height: 20px;"></iframe>
+
+                        <!-- Place this tag where you want the +1 button to render. -->
+                        <div class="g-plusone" data-size="medium" data-annotation="inline" data-width="300" data-recommendations="false" expandTo="top" data-href="https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd"></div>
+                    </div>
+                </pt-options-panel>
+
+                <div ng-show="showCachedItems" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Cached Items ({{ cachedItems.itemsLength }})</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <ul>
+                            <li ng-repeat="cached in cachedItems.items">{{ cached.title }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div ng-show="!showCachedItems">
+                    <div class="text-center">
+                        <img src="img/pirateer_logo.png" alt="Pirateer IMDB - Your source for the Pirate Bay ratings" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -7,7 +7,7 @@ if (typeof DEBUG === 'undefined') DEBUG = true;
 /** @global **/
 var _gaq = _gaq || [];
 
-(function () {
+(function() {
     var ga = document.createElement('script');
     ga.type = 'text/javascript';
     ga.async = true;
@@ -17,7 +17,7 @@ var _gaq = _gaq || [];
 
     if (!chrome.runtime.getManifest().update_url) {
         DEBUG && console.log('Setting up local analytics ID of UA-99999999-X');
-        _gaq.push(['_setAccount', 'UA-99999999-X'])
+        _gaq.push(['_setAccount', 'UA-99999999-X']);
     } else {
         DEBUG && console.log('Setting up online analytics ID of UA-43678943-3');
         _gaq.push(['_setAccount', 'UA-43678943-3']);

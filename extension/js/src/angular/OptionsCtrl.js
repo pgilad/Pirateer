@@ -78,9 +78,6 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
 
         $scope.toggleCachedItemsDisplay = function() {
             $scope.showCachedItems = !$scope.showCachedItems;
-            if ($scope.showCachedItems) {
-                _gaq.push(['_trackEvent', 'settings', 'cachedItems', 'show'])
-            }
         };
 
         /**
@@ -126,14 +123,12 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
 
             chrome.storage.local.clear(function() {
                 DEBUG && console.log('Cache Cleared');
-
-                _gaq.push(['_trackEvent', 'settings', 'cachedItems', 'clear']);
-
                 $scope.$apply(function() {
                     $scope.cacheClearedLabelShow = true;
                     init();
                 });
 
+                //clear label after a bit
                 $timeout(function() {
                     $scope.cacheClearedLabelShow = false;
                 }, 1000);
@@ -148,46 +143,11 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
             ptStorageService.setCacheOptionsByValue(value);
         };
 
-        /**
-         * @type {*}
-         */
-        var reportOverDonations = _.debounce(function() {
-            _gaq.push(['_trackEvent', 'donations', 'mouseover', 'optionsPage']);
-        }, 1000);
-
-        var submitForm = function() {
+        $scope.submitForm = function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             DEBUG && console.log('Submitting paypal form');
             document.querySelector('#paypalForm').submit();
-        };
-
-        /**
-         * Report a mouseover /click event on paypal
-         * @param e
-         * @param type
-         */
-        $scope.reportOver = function(e, type) {
-            if (e) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-
-            if (type === 'mouseEnter') {
-                reportOverDonations();
-            } else if (type === 'submit') {
-                if (_gaq) {
-                    DEBUG && console.log('Detected gaq - pushing submitForm to hitcallback');
-                    _gaq.push([
-                        '_set', 'hitCallback',
-                        function() {
-                            submitForm();
-                            _gaq.push(['_set', 'hitCallback', null]);
-                        }
-                    ]);
-                    _gaq.push(['_trackEvent', 'donations', 'buttonClick', 'optionsPage']);
-                } else {
-                    submitForm();
-                }
-            }
         };
 
         /**
@@ -206,26 +166,7 @@ angular.module('app').controller('OptionsCtrl', ['$scope', '$timeout', 'ptStorag
             var hasOpened = false;
             if (!searchTerm) return;
             var targetUrl = 'http://thepiratebay.se/search/' + encodeURIComponent(searchTerm) + '/0/99/0';
-            if (_gaq) {
-                _gaq.push([
-                    '_set', 'hitCallback',
-                    function() {
-                        hasOpened = true;
-                        openNewWindow(targetUrl);
-                        _gaq.push(['_set', 'hitCallback', null]);
-                    }
-                ]);
-                _gaq.push(['_trackEvent', 'Search', 'fromOptions', searchTerm]);
-            } else {
-                hasOpened = true;
-                openNewWindow(targetUrl);
-            }
-            //open the window anyway if the callback wasn't called
-            $timeout(function() {
-                if (!hasOpened) {
-                    openNewWindow();
-                }
-            }, 1000);
+            openNewWindow(targetUrl);
         };
     }
 ]);
