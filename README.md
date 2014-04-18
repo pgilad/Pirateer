@@ -23,5 +23,5 @@ Install from the [Chrome Webstore](https://chrome.google.com/webstore/detail/pir
 
 ## License
 
-Pirateer is licensed under the BSD 3-Clause license.
-[BSD-3](http://opensource.org/licenses/BSD-3-Clause) © [Gilad Peleg](https://github.com/pgilad)
+Pirateer is licensed under the [BSD 3-Clause license](http://opensource.org/licenses/BSD-3-Clause)
+© 2014 by [Gilad Peleg](https://github.com/pgilad)
