@@ -66,7 +66,10 @@ module.exports = function(grunt) {
             }
         },
         injector: {
-            options: {},
+            options: {
+                addRootSlash: false,
+                ignorePath: 'build/'
+            },
             deps: {
                 files: {
                     //options html
