@@ -37,8 +37,6 @@
             "exclude_globs": [
                 "*://thepiratebay.*/",
                 "*://*top",
-                "*://*top/3*",
-                "*://*top/4*",
                 "*://*browse",
                 "*://*browse/4*",
                 "*://*browse/3*",

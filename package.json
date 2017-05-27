@@ -1,34 +1,41 @@
 {
-    "name": "Pirateer",
-    "version": "0.6.3",
-    "private": true,
-    "license": "BSD-3-Clause",
-    "author": {
-        "name": "Gilad Peleg",
-        "email": "giladp007@gmail.com",
-        "url": "https://github.com/pgilad"
-    },
-    "description": "Pirateer is a Chrome Extension that adds IMDb ratings to TV shows and movies on The Pirate Bay",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/pgilad/pirateer.git"
-    },
-    "bugs": "https://github.com/pgilad/pirateer/issues",
-    "homepage": "https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd",
-    "dependencies": {},
-    "devDependencies": {
-        "grunt": "~0.4.1",
-        "grunt-bumpup": "^0.5.2",
-        "grunt-contrib-clean": "~0.5.0",
-        "grunt-contrib-compress": "^0.8.0",
-        "grunt-contrib-concat": "^0.4.0",
-        "grunt-contrib-copy": "^0.5.0",
-        "grunt-contrib-cssmin": "^0.9.0",
-        "grunt-contrib-htmlmin": "^0.2.0",
-        "grunt-contrib-uglify": "^0.4.0",
-        "grunt-contrib-watch": "^0.6.1",
-        "grunt-dev-update": "^0.5.6",
-        "grunt-injector": "^0.5.2",
-        "load-grunt-tasks": "^0.4.0"
-    }
+  "name": "Pirateer",
+  "version": "0.6.3",
+  "private": true,
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Gilad Peleg",
+    "email": "giladp007@gmail.com",
+    "url": "https://github.com/pgilad"
+  },
+  "description": "Pirateer is a Chrome Extension that adds IMDb ratings to TV shows and movies on The Pirate Bay",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pgilad/pirateer.git"
+  },
+  "bugs": "https://github.com/pgilad/pirateer/issues",
+  "homepage": "https://chrome.google.com/webstore/detail/pirateer/dleipnbkaniagkflpbhloiadkdooaacd",
+  "scripts": {
+    "build": "grunt build"
+  },
+  "dependencies": {
+    "bootstrap": "3.3.7",
+    "lodash": "4.17.4"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-bumpup": "^0.5.2",
+    "grunt-cli": "1.2.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-compress": "^0.8.0",
+    "grunt-contrib-concat": "^0.4.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-cssmin": "^0.9.0",
+    "grunt-contrib-htmlmin": "^0.2.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-dev-update": "^0.5.6",
+    "grunt-injector": "^0.5.2",
+    "load-grunt-tasks": "^0.4.0"
+  }
 }

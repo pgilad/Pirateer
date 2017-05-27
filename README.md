@@ -15,7 +15,7 @@ Install from the [Chrome Webstore](https://chrome.google.com/webstore/detail/pir
 ## Development Install
 
 1. Git clone this repository.
-2. Run `npm install && bower install`.
+2. Run `npm install`.
 3. Run `grunt build` to build a running version into `build/`.
 4. Load the `build/` as an unpacked extension in `chrome://extensions`.
 5. Use extension.

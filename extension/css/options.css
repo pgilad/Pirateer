@@ -53,8 +53,7 @@ button {
 body {
     background-color: white;
     font-size: 12px;
-    margin-left: 155px;
-    margin-right: 0;
+    margin: 0;
     overflow-x: hidden;
 }
 h1 {

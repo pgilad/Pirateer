@@ -1,10 +1,6 @@
 'use strict';
 module.exports = function(grunt) {
     grunt.initConfig({
-        config: {
-            src: 'extension',
-            dist: 'build'
-        },
         pkg: grunt.file.readJSON('package.json'),
         manifest: grunt.file.readJSON('extension/manifest.json'),
         banner: 'v<%= pkg.version manifest["version"] %>, <%= grunt.template.today("dd-mm-yy HH:MM") %>',
@@ -13,7 +9,7 @@ module.exports = function(grunt) {
                 normalize: true
             },
             files: [
-                '<%= config.src %>/manifest.json',
+                'extension/manifest.json',
                 './bower.json',
                 './package.json'
             ]
@@ -23,36 +19,33 @@ module.exports = function(grunt) {
                 banner: '/*! <%= pkg.name %> created: <%= grunt.template.today("dd-mm-yyyy") %> minified js */\n',
                 preserveComments: 'some',
                 compress: {
-                    global_defs: {
-                        'DEBUG': false
-                    },
+                    global_defs: { 'DEBUG': false },
                     dead_code: true
                 }
             },
             build: {
                 files: [{
-                    '<%= config.dist %>/js/background.min.js': [
-                        '<%= config.src %>/js/src/init.js',
-                        '<%= config.src %>/js/src/angular/services.js',
-                        '<%= config.src %>/js/backapp.js'
+                    'build/js/background.min.js': [
+                        'extension/js/src/init.js',
+                        'extension/js/src/angular/services.js',
+                        'extension/js/backapp.js'
                     ],
-                    '<%= config.dist %>/js/options.min.js': [
-                        '<%= config.src %>/js/src/init.js',
-                        '<%= config.src %>/js/src/angular/services.js',
-                        '<%= config.src %>/js/src/angular/panel_directive.js',
-                        '<%= config.src %>/js/src/angular/OptionsCtrl.js'
+                    'build/js/options.min.js': [
+                        'extension/js/src/init.js',
+                        'extension/js/src/angular/services.js',
+                        'extension/js/src/angular/panel_directive.js',
+                        'extension/js/src/angular/OptionsCtrl.js'
                     ],
-                    '<%= config.dist %>/js/content_script.js': [
-                        '<%= config.src %>/js/vendor/jquery-2.0.3.min.js',
-                        '<%= config.src %>/js/vendor/jquery.contextMenu.js',
-                        '<%= config.src %>/js/vendor/jquery.ui.position.js',
-                        '<%= config.src %>/js/content-helpers.js',
-                        '<%= config.src %>/js/content.js'
+                    'build/js/content_script.js': [
+                        'extension/js/vendor/jquery-2.0.3.min.js',
+                        'extension/js/vendor/jquery.contextMenu.js',
+                        'extension/js/vendor/jquery.ui.position.js',
+                        'extension/js/content-helpers.js',
+                        'extension/js/content.js'
                     ]
                 }]
             }
         },
-        // make a zipfile
         compress: {
             build: {
                 options: {
@@ -61,7 +54,7 @@ module.exports = function(grunt) {
                     level: 6
                 },
                 expand: true,
-                cwd: '<%= config.dist %>/',
+                cwd: 'build/',
                 src: ['**/*']
             }
         },
@@ -72,16 +65,14 @@ module.exports = function(grunt) {
             },
             deps: {
                 files: {
-                    //options html
-                    '<%= config.dist %>/options.html': [
-                        '<%= config.dist %>/css/options.min.css',
-                        '<%= config.dist %>/js/vendors.min.js',
-                        '<%= config.dist %>/js/options.min.js'
+                    'build/options.html': [
+                        'build/css/options.min.css',
+                        'build/js/vendors.min.js',
+                        'build/js/options.min.js'
                     ],
-                    //background html
-                    '<%= config.dist %>/background.html': [
-                        '<%= config.dist %>/js/vendors.min.js',
-                        '<%= config.dist %>/js/background.min.js'
+                    'build/background.html': [
+                        'build/js/vendors.min.js',
+                        'build/js/background.min.js'
                     ]
                 }
             }
@@ -92,11 +83,11 @@ module.exports = function(grunt) {
                     banner: '/* CSS minified file */'
                 },
                 files: {
-                    '<%= config.dist %>/css/options.min.css': [
-                        '<%= config.src %>/bower_components/bootstrap/dist/css/bootstrap.min.css', '<%= config.src %>/css/options.css'
+                    'build/css/options.min.css': [
+                        'node_modules/bootstrap/dist/css/bootstrap.min.css', 'extension/css/options.css'
                     ],
-                    '<%= config.dist %>/css/content.min.css': [
-                        '<%= config.src %>/css/vendor/jquery.contextMenu.css'
+                    'build/css/content.min.css': [
+                        'extension/css/vendor/jquery.contextMenu.css'
                     ]
                 }
             }
@@ -109,7 +100,7 @@ module.exports = function(grunt) {
                 },
                 files: [{
                     expand: true, // Enable dynamic expansion.
-                    cwd: '<%= config.dist %>/', // Src matches are relative to this path.
+                    cwd: 'build/', // Src matches are relative to this path.
                     src: ['*.html'] // Actual pattern(s) to match.
                 }]
             }
@@ -131,24 +122,24 @@ module.exports = function(grunt) {
             build: {
                 files: [{
                     expand: true,
-                    cwd: '<%= config.src %>/',
+                    cwd: 'extension/',
                     src: [
                         'img/**/*',
                         '*.html',
                         'js/vendor/jquery-2.0.3.min.map'
                     ],
-                    dest: '<%= config.dist %>/'
+                    dest: 'build/'
                 }]
             }
         },
         concat: {
             build: {
-                src: ['<%= config.src %>/bower_components/lodash/dist/lodash.min.js', '<%= config.src %>/js/vendor/angular.min.js'],
-                dest: '<%= config.dist %>/js/vendors.min.js'
+                src: ['extension/js/vendor/lodash.min.js', 'extension/js/vendor/angular.min.js'],
+                dest: 'build/js/vendors.min.js'
             }
         },
         clean: {
-            build: ['<%= config.dist %>/']
+            build: ['build/']
         },
         watch: {
             files: ['<%= jshint.files %>'],

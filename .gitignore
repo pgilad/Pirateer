@@ -2,3 +2,4 @@ build/
 extension/bower_components/
 node_modules/
 workspace/versions/
+.DS_Store
