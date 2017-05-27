@@ -10,7 +10,6 @@ module.exports = function(grunt) {
             },
             files: [
                 'extension/manifest.json',
-                './bower.json',
                 './package.json'
             ]
         },
