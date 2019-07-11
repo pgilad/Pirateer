@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "bootstrap": "3.3.7",
-    "lodash": "4.17.4"
+    "lodash": "^4.17.14"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
