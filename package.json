@@ -19,7 +19,7 @@
     "build": "grunt build"
   },
   "dependencies": {
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "lodash": "^4.17.14"
   },
   "devDependencies": {
